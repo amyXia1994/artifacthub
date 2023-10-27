@@ -1,0 +1,25 @@
+version: 0.1.0
+name: kubernetes
+displayName: kubernetes
+createdAt: "2023-10-26T06:46:13Z"
+description: '`kubernetes` is a kcl package, which contains kubernetes resource models'
+links:
+- name: KCL homepage
+  url: https://kcl-lang.io/
+- name: KCL repo
+  url: https://github.com/kcl-lang/kcl
+install: |
+  #### Add `kubernetes` with tag `v1.28` as dependency
+  ```
+  kpm add kubernetes:v1.28
+  ```
+
+  #### Pull `kubernetes` with tag `v1.28` to local
+  ```
+  kpm pull kpm add kubernetes:v1.28
+  ```
+maintainers:
+- name: kcl-lang.io
+  email: kcl-lang.io@domainsbyproxy.com
+provider:
+  name: kcl-lang.io
