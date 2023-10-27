@@ -10,18 +10,8 @@ MatchCondition represents a condition which must by fulfilled for a request to b
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**expression** `required`|str|Expression represents the expression which will be evaluated by CEL. Must evaluate to bool. CEL expressions have access to the contents of the AdmissionRequest and Authorizer, organized into CEL variables:
-
-&#39;object&#39; - The object from the incoming request. The value is null for DELETE requests. &#39;oldObject&#39; - The existing object. The value is null for CREATE requests. &#39;request&#39; - Attributes of the admission request(/pkg/apis/admission/types.go#AdmissionRequest). &#39;authorizer&#39; - A CEL Authorizer. May be used to perform authorization checks for the principal (user or service account) of the request.
-See https://pkg.go.dev/k8s.io/apiserver/pkg/cel/library#Authz
-&#39;authorizer.requestResource&#39; - A CEL ResourceCheck constructed from the &#39;authorizer&#39; and configured with the
-request resource.
-Documentation on CEL: https://kubernetes.io/docs/reference/using-api/cel/
-
-Required.||
-|**name** `required`|str|Name is an identifier for this match condition, used for strategic merging of MatchConditions, as well as providing an identifier for logging purposes. A good name should be descriptive of the associated expression. Name must be a qualified name consisting of alphanumeric characters, &#39;-&#39;, &#39;_&#39; or &#39;.&#39;, and must start and end with an alphanumeric character (e.g. &#39;MyName&#39;,  or &#39;my.name&#39;,  or &#39;123-abc&#39;, regex used for validation is &#39;([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]&#39;) with an optional DNS subdomain prefix and &#39;/&#39; (e.g. &#39;example.com/MyName&#39;)
-
-Required.||
+|**expression** `required`|str|Expression represents the expression which will be evaluated by CEL. Must evaluate to bool. CEL expressions have access to the contents of the AdmissionRequest and Authorizer, organized into CEL variables:&lt;br&gt;&lt;br&gt;&#39;object&#39; - The object from the incoming request. The value is null for DELETE requests. &#39;oldObject&#39; - The existing object. The value is null for CREATE requests. &#39;request&#39; - Attributes of the admission request(/pkg/apis/admission/types.go#AdmissionRequest). &#39;authorizer&#39; - A CEL Authorizer. May be used to perform authorization checks for the principal (user or service account) of the request.&lt;br&gt;See https://pkg.go.dev/k8s.io/apiserver/pkg/cel/library#Authz&lt;br&gt;&#39;authorizer.requestResource&#39; - A CEL ResourceCheck constructed from the &#39;authorizer&#39; and configured with the&lt;br&gt;request resource.&lt;br&gt;Documentation on CEL: https://kubernetes.io/docs/reference/using-api/cel/&lt;br&gt;&lt;br&gt;Required.||
+|**name** `required`|str|Name is an identifier for this match condition, used for strategic merging of MatchConditions, as well as providing an identifier for logging purposes. A good name should be descriptive of the associated expression. Name must be a qualified name consisting of alphanumeric characters, &#39;-&#39;, &#39;_&#39; or &#39;.&#39;, and must start and end with an alphanumeric character (e.g. &#39;MyName&#39;,  or &#39;my.name&#39;,  or &#39;123-abc&#39;, regex used for validation is &#39;([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]&#39;) with an optional DNS subdomain prefix and &#39;/&#39; (e.g. &#39;example.com/MyName&#39;)&lt;br&gt;&lt;br&gt;Required.||
 ### MutatingWebhook
 
 MutatingWebhook describes an admission webhook and the resources and operations it applies to.
@@ -33,63 +23,12 @@ MutatingWebhook describes an admission webhook and the resources and operations 
 |**admissionReviewVersions** `required`|[str]|AdmissionReviewVersions is an ordered list of preferred `AdmissionReview` versions the Webhook expects. API server will try to use first version in the list which it supports. If none of the versions specified in this list supported by API server, validation will fail for this object. If a persisted webhook configuration specifies allowed versions and does not include any versions known to the API Server, calls to the webhook will fail and be subject to the failure policy.||
 |**clientConfig** `required`|[WebhookClientConfig](#webhookclientconfig)|ClientConfig defines how to communicate with the hook. Required||
 |**failurePolicy**|str|FailurePolicy defines how unrecognized errors from the admission endpoint are handled - allowed values are Ignore or Fail. Defaults to Fail.||
-|**matchConditions**|[[MatchCondition](#matchcondition)]|MatchConditions is a list of conditions that must be met for a request to be sent to this webhook. Match conditions filter requests that have already been matched by the rules, namespaceSelector, and objectSelector. An empty list of matchConditions matches all requests. There are a maximum of 64 match conditions allowed.
-
-The exact matching logic is (in order):
-1. If ANY matchCondition evaluates to FALSE, the webhook is skipped.
-2. If ALL matchConditions evaluate to TRUE, the webhook is called.
-3. If any matchCondition evaluates to an error (but none are FALSE):
-- If failurePolicy=Fail, reject the request
-- If failurePolicy=Ignore, the error is ignored and the webhook is skipped
-
-This is an alpha feature and managed by the AdmissionWebhookMatchConditions feature gate.||
-|**matchPolicy**|str|matchPolicy defines how the &#34;rules&#34; list is used to match incoming requests. Allowed values are &#34;Exact&#34; or &#34;Equivalent&#34;.
-
-- Exact: match a request only if it exactly matches a specified rule. For example, if deployments can be modified via apps/v1, apps/v1beta1, and extensions/v1beta1, but &#34;rules&#34; only included `apiGroups:[&#34;apps&#34;], apiVersions:[&#34;v1&#34;], resources: [&#34;deployments&#34;]`, a request to apps/v1beta1 or extensions/v1beta1 would not be sent to the webhook.
-
-- Equivalent: match a request if modifies a resource listed in rules, even via another API group or version. For example, if deployments can be modified via apps/v1, apps/v1beta1, and extensions/v1beta1, and &#34;rules&#34; only included `apiGroups:[&#34;apps&#34;], apiVersions:[&#34;v1&#34;], resources: [&#34;deployments&#34;]`, a request to apps/v1beta1 or extensions/v1beta1 would be converted to apps/v1 and sent to the webhook.
-
-Defaults to &#34;Equivalent&#34;||
+|**matchConditions**|[[MatchCondition](#matchcondition)]|MatchConditions is a list of conditions that must be met for a request to be sent to this webhook. Match conditions filter requests that have already been matched by the rules, namespaceSelector, and objectSelector. An empty list of matchConditions matches all requests. There are a maximum of 64 match conditions allowed.&lt;br&gt;&lt;br&gt;The exact matching logic is (in order):&lt;br&gt;1. If ANY matchCondition evaluates to FALSE, the webhook is skipped.&lt;br&gt;2. If ALL matchConditions evaluate to TRUE, the webhook is called.&lt;br&gt;3. If any matchCondition evaluates to an error (but none are FALSE):&lt;br&gt;- If failurePolicy=Fail, reject the request&lt;br&gt;- If failurePolicy=Ignore, the error is ignored and the webhook is skipped&lt;br&gt;&lt;br&gt;This is an alpha feature and managed by the AdmissionWebhookMatchConditions feature gate.||
+|**matchPolicy**|str|matchPolicy defines how the &#34;rules&#34; list is used to match incoming requests. Allowed values are &#34;Exact&#34; or &#34;Equivalent&#34;.&lt;br&gt;&lt;br&gt;- Exact: match a request only if it exactly matches a specified rule. For example, if deployments can be modified via apps/v1, apps/v1beta1, and extensions/v1beta1, but &#34;rules&#34; only included `apiGroups:[&#34;apps&#34;], apiVersions:[&#34;v1&#34;], resources: [&#34;deployments&#34;]`, a request to apps/v1beta1 or extensions/v1beta1 would not be sent to the webhook.&lt;br&gt;&lt;br&gt;- Equivalent: match a request if modifies a resource listed in rules, even via another API group or version. For example, if deployments can be modified via apps/v1, apps/v1beta1, and extensions/v1beta1, and &#34;rules&#34; only included `apiGroups:[&#34;apps&#34;], apiVersions:[&#34;v1&#34;], resources: [&#34;deployments&#34;]`, a request to apps/v1beta1 or extensions/v1beta1 would be converted to apps/v1 and sent to the webhook.&lt;br&gt;&lt;br&gt;Defaults to &#34;Equivalent&#34;||
 |**name** `required`|str|The name of the admission webhook. Name should be fully qualified, e.g., imagepolicy.kubernetes.io, where &#34;imagepolicy&#34; is the name of the webhook, and kubernetes.io is the name of the organization. Required.||
-|**namespaceSelector**|[LabelSelector](#labelselector)|NamespaceSelector decides whether to run the webhook on an object based on whether the namespace for that object matches the selector. If the object itself is a namespace, the matching is performed on object.metadata.labels. If the object is another cluster scoped resource, it never skips the webhook.
-
-For example, to run the webhook on any objects whose namespace is not associated with &#34;runlevel&#34; of &#34;0&#34; or &#34;1&#34;;  you will set the selector as follows: &#34;namespaceSelector&#34;: {
-&#34;matchExpressions&#34;: [
-{
-&#34;key&#34;: &#34;runlevel&#34;,
-&#34;operator&#34;: &#34;NotIn&#34;,
-&#34;values&#34;: [
-&#34;0&#34;,
-&#34;1&#34;
-]
-}
-]
-}
-
-If instead you want to only run the webhook on any objects whose namespace is associated with the &#34;environment&#34; of &#34;prod&#34; or &#34;staging&#34;; you will set the selector as follows: &#34;namespaceSelector&#34;: {
-&#34;matchExpressions&#34;: [
-{
-&#34;key&#34;: &#34;environment&#34;,
-&#34;operator&#34;: &#34;In&#34;,
-&#34;values&#34;: [
-&#34;prod&#34;,
-&#34;staging&#34;
-]
-}
-]
-}
-
-See https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/ for more examples of label selectors.
-
-Default to the empty LabelSelector, which matches everything.||
+|**namespaceSelector**|[LabelSelector](#labelselector)|NamespaceSelector decides whether to run the webhook on an object based on whether the namespace for that object matches the selector. If the object itself is a namespace, the matching is performed on object.metadata.labels. If the object is another cluster scoped resource, it never skips the webhook.&lt;br&gt;&lt;br&gt;For example, to run the webhook on any objects whose namespace is not associated with &#34;runlevel&#34; of &#34;0&#34; or &#34;1&#34;;  you will set the selector as follows: &#34;namespaceSelector&#34;: {&lt;br&gt;&#34;matchExpressions&#34;: [&lt;br&gt;{&lt;br&gt;&#34;key&#34;: &#34;runlevel&#34;,&lt;br&gt;&#34;operator&#34;: &#34;NotIn&#34;,&lt;br&gt;&#34;values&#34;: [&lt;br&gt;&#34;0&#34;,&lt;br&gt;&#34;1&#34;&lt;br&gt;]&lt;br&gt;}&lt;br&gt;]&lt;br&gt;}&lt;br&gt;&lt;br&gt;If instead you want to only run the webhook on any objects whose namespace is associated with the &#34;environment&#34; of &#34;prod&#34; or &#34;staging&#34;; you will set the selector as follows: &#34;namespaceSelector&#34;: {&lt;br&gt;&#34;matchExpressions&#34;: [&lt;br&gt;{&lt;br&gt;&#34;key&#34;: &#34;environment&#34;,&lt;br&gt;&#34;operator&#34;: &#34;In&#34;,&lt;br&gt;&#34;values&#34;: [&lt;br&gt;&#34;prod&#34;,&lt;br&gt;&#34;staging&#34;&lt;br&gt;]&lt;br&gt;}&lt;br&gt;]&lt;br&gt;}&lt;br&gt;&lt;br&gt;See https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/ for more examples of label selectors.&lt;br&gt;&lt;br&gt;Default to the empty LabelSelector, which matches everything.||
 |**objectSelector**|[LabelSelector](#labelselector)|ObjectSelector decides whether to run the webhook based on if the object has matching labels. objectSelector is evaluated against both the oldObject and newObject that would be sent to the webhook, and is considered to match if either object matches the selector. A null object (oldObject in the case of create, or newObject in the case of delete) or an object that cannot have labels (like a DeploymentRollback or a PodProxyOptions object) is not considered to match. Use the object selector only if the webhook is opt-in, because end users may skip the admission webhook by setting the labels. Default to the empty LabelSelector, which matches everything.||
-|**reinvocationPolicy**|str|reinvocationPolicy indicates whether this webhook should be called multiple times as part of a single admission evaluation. Allowed values are &#34;Never&#34; and &#34;IfNeeded&#34;.
-
-Never: the webhook will not be called more than once in a single admission evaluation.
-
-IfNeeded: the webhook will be called at least one additional time as part of the admission evaluation if the object being admitted is modified by other admission plugins after the initial webhook call. Webhooks that specify this option *must* be idempotent, able to process objects they previously admitted. Note: * the number of additional invocations is not guaranteed to be exactly one. * if additional invocations result in further modifications to the object, webhooks are not guaranteed to be invoked again. * webhooks that use this option may be reordered to minimize the number of additional invocations. * to validate an object after all mutations are guaranteed complete, use a validating admission webhook instead.
-
-Defaults to &#34;Never&#34;.||
+|**reinvocationPolicy**|str|reinvocationPolicy indicates whether this webhook should be called multiple times as part of a single admission evaluation. Allowed values are &#34;Never&#34; and &#34;IfNeeded&#34;.&lt;br&gt;&lt;br&gt;Never: the webhook will not be called more than once in a single admission evaluation.&lt;br&gt;&lt;br&gt;IfNeeded: the webhook will be called at least one additional time as part of the admission evaluation if the object being admitted is modified by other admission plugins after the initial webhook call. Webhooks that specify this option *must* be idempotent, able to process objects they previously admitted. Note: * the number of additional invocations is not guaranteed to be exactly one. * if additional invocations result in further modifications to the object, webhooks are not guaranteed to be invoked again. * webhooks that use this option may be reordered to minimize the number of additional invocations. * to validate an object after all mutations are guaranteed complete, use a validating admission webhook instead.&lt;br&gt;&lt;br&gt;Defaults to &#34;Never&#34;.||
 |**rules**|[[RuleWithOperations](#rulewithoperations)]|Rules describes what operations on what resources/subresources the webhook cares about. The webhook cares about an operation if it matches _any_ Rule. However, in order to prevent ValidatingAdmissionWebhooks and MutatingAdmissionWebhooks from putting the cluster in a state which cannot be recovered from without completely disabling the plugin, ValidatingAdmissionWebhooks and MutatingAdmissionWebhooks are never called on admission requests for ValidatingWebhookConfiguration and MutatingWebhookConfiguration objects.||
 |**sideEffects** `required`|str|SideEffects states whether this webhook has side effects. Acceptable values are: None, NoneOnDryRun (webhooks created via v1beta1 may also specify Some or Unknown). Webhooks with side effects MUST implement a reconciliation system, since a request may be rejected by a future step in the admission chain and the side effects therefore need to be undone. Requests with the dryRun attribute will be auto-rejected if they match a webhook with sideEffects == Unknown or Some.||
 |**timeoutSeconds**|int|TimeoutSeconds specifies the timeout for this webhook. After the timeout passes, the webhook call will be ignored or the API call will fail based on the failure policy. The timeout value must be between 1 and 30 seconds. Default to 10 seconds.||
@@ -128,13 +67,7 @@ RuleWithOperations is a tuple of Operations and Resources. It is recommended to 
 |**apiGroups**|[str]|APIGroups is the API groups the resources belong to. &#39;*&#39; is all groups. If &#39;*&#39; is present, the length of the slice must be one. Required.||
 |**apiVersions**|[str]|APIVersions is the API versions the resources belong to. &#39;*&#39; is all versions. If &#39;*&#39; is present, the length of the slice must be one. Required.||
 |**operations**|[str]|Operations is the operations the admission hook cares about - CREATE, UPDATE, DELETE, CONNECT or * for all of those operations and any future admission operations that are added. If &#39;*&#39; is present, the length of the slice must be one. Required.||
-|**resources**|[str]|Resources is a list of resources this rule applies to.
-
-For example: &#39;pods&#39; means pods. &#39;pods/log&#39; means the log subresource of pods. &#39;*&#39; means all resources, but not subresources. &#39;pods/*&#39; means all subresources of pods. &#39;*/scale&#39; means all scale subresources. &#39;*/*&#39; means all resources and their subresources.
-
-If wildcard is present, the validation rule will ensure resources do not overlap with each other.
-
-Depending on the enclosing object, subresources might not be allowed. Required.||
+|**resources**|[str]|Resources is a list of resources this rule applies to.&lt;br&gt;&lt;br&gt;For example: &#39;pods&#39; means pods. &#39;pods/log&#39; means the log subresource of pods. &#39;*&#39; means all resources, but not subresources. &#39;pods/*&#39; means all subresources of pods. &#39;*/scale&#39; means all scale subresources. &#39;*/*&#39; means all resources and their subresources.&lt;br&gt;&lt;br&gt;If wildcard is present, the validation rule will ensure resources do not overlap with each other.&lt;br&gt;&lt;br&gt;Depending on the enclosing object, subresources might not be allowed. Required.||
 |**scope**|str|scope specifies the scope of this rule. Valid values are &#34;Cluster&#34;, &#34;Namespaced&#34;, and &#34;*&#34; &#34;Cluster&#34; means that only cluster-scoped resources will match this rule. Namespace API objects are cluster-scoped. &#34;Namespaced&#34; means that only namespaced resources will match this rule. &#34;*&#34; means that there are no scope restrictions. Subresources match the scope of their parent resource. Default is &#34;*&#34;.||
 ### ServiceReference
 
@@ -159,55 +92,10 @@ ValidatingWebhook describes an admission webhook and the resources and operation
 |**admissionReviewVersions** `required`|[str]|AdmissionReviewVersions is an ordered list of preferred `AdmissionReview` versions the Webhook expects. API server will try to use first version in the list which it supports. If none of the versions specified in this list supported by API server, validation will fail for this object. If a persisted webhook configuration specifies allowed versions and does not include any versions known to the API Server, calls to the webhook will fail and be subject to the failure policy.||
 |**clientConfig** `required`|[WebhookClientConfig](#webhookclientconfig)|ClientConfig defines how to communicate with the hook. Required||
 |**failurePolicy**|str|FailurePolicy defines how unrecognized errors from the admission endpoint are handled - allowed values are Ignore or Fail. Defaults to Fail.||
-|**matchConditions**|[[MatchCondition](#matchcondition)]|MatchConditions is a list of conditions that must be met for a request to be sent to this webhook. Match conditions filter requests that have already been matched by the rules, namespaceSelector, and objectSelector. An empty list of matchConditions matches all requests. There are a maximum of 64 match conditions allowed.
-
-The exact matching logic is (in order):
-1. If ANY matchCondition evaluates to FALSE, the webhook is skipped.
-2. If ALL matchConditions evaluate to TRUE, the webhook is called.
-3. If any matchCondition evaluates to an error (but none are FALSE):
-- If failurePolicy=Fail, reject the request
-- If failurePolicy=Ignore, the error is ignored and the webhook is skipped
-
-This is an alpha feature and managed by the AdmissionWebhookMatchConditions feature gate.||
-|**matchPolicy**|str|matchPolicy defines how the &#34;rules&#34; list is used to match incoming requests. Allowed values are &#34;Exact&#34; or &#34;Equivalent&#34;.
-
-- Exact: match a request only if it exactly matches a specified rule. For example, if deployments can be modified via apps/v1, apps/v1beta1, and extensions/v1beta1, but &#34;rules&#34; only included `apiGroups:[&#34;apps&#34;], apiVersions:[&#34;v1&#34;], resources: [&#34;deployments&#34;]`, a request to apps/v1beta1 or extensions/v1beta1 would not be sent to the webhook.
-
-- Equivalent: match a request if modifies a resource listed in rules, even via another API group or version. For example, if deployments can be modified via apps/v1, apps/v1beta1, and extensions/v1beta1, and &#34;rules&#34; only included `apiGroups:[&#34;apps&#34;], apiVersions:[&#34;v1&#34;], resources: [&#34;deployments&#34;]`, a request to apps/v1beta1 or extensions/v1beta1 would be converted to apps/v1 and sent to the webhook.
-
-Defaults to &#34;Equivalent&#34;||
+|**matchConditions**|[[MatchCondition](#matchcondition)]|MatchConditions is a list of conditions that must be met for a request to be sent to this webhook. Match conditions filter requests that have already been matched by the rules, namespaceSelector, and objectSelector. An empty list of matchConditions matches all requests. There are a maximum of 64 match conditions allowed.&lt;br&gt;&lt;br&gt;The exact matching logic is (in order):&lt;br&gt;1. If ANY matchCondition evaluates to FALSE, the webhook is skipped.&lt;br&gt;2. If ALL matchConditions evaluate to TRUE, the webhook is called.&lt;br&gt;3. If any matchCondition evaluates to an error (but none are FALSE):&lt;br&gt;- If failurePolicy=Fail, reject the request&lt;br&gt;- If failurePolicy=Ignore, the error is ignored and the webhook is skipped&lt;br&gt;&lt;br&gt;This is an alpha feature and managed by the AdmissionWebhookMatchConditions feature gate.||
+|**matchPolicy**|str|matchPolicy defines how the &#34;rules&#34; list is used to match incoming requests. Allowed values are &#34;Exact&#34; or &#34;Equivalent&#34;.&lt;br&gt;&lt;br&gt;- Exact: match a request only if it exactly matches a specified rule. For example, if deployments can be modified via apps/v1, apps/v1beta1, and extensions/v1beta1, but &#34;rules&#34; only included `apiGroups:[&#34;apps&#34;], apiVersions:[&#34;v1&#34;], resources: [&#34;deployments&#34;]`, a request to apps/v1beta1 or extensions/v1beta1 would not be sent to the webhook.&lt;br&gt;&lt;br&gt;- Equivalent: match a request if modifies a resource listed in rules, even via another API group or version. For example, if deployments can be modified via apps/v1, apps/v1beta1, and extensions/v1beta1, and &#34;rules&#34; only included `apiGroups:[&#34;apps&#34;], apiVersions:[&#34;v1&#34;], resources: [&#34;deployments&#34;]`, a request to apps/v1beta1 or extensions/v1beta1 would be converted to apps/v1 and sent to the webhook.&lt;br&gt;&lt;br&gt;Defaults to &#34;Equivalent&#34;||
 |**name** `required`|str|The name of the admission webhook. Name should be fully qualified, e.g., imagepolicy.kubernetes.io, where &#34;imagepolicy&#34; is the name of the webhook, and kubernetes.io is the name of the organization. Required.||
-|**namespaceSelector**|[LabelSelector](#labelselector)|NamespaceSelector decides whether to run the webhook on an object based on whether the namespace for that object matches the selector. If the object itself is a namespace, the matching is performed on object.metadata.labels. If the object is another cluster scoped resource, it never skips the webhook.
-
-For example, to run the webhook on any objects whose namespace is not associated with &#34;runlevel&#34; of &#34;0&#34; or &#34;1&#34;;  you will set the selector as follows: &#34;namespaceSelector&#34;: {
-&#34;matchExpressions&#34;: [
-{
-&#34;key&#34;: &#34;runlevel&#34;,
-&#34;operator&#34;: &#34;NotIn&#34;,
-&#34;values&#34;: [
-&#34;0&#34;,
-&#34;1&#34;
-]
-}
-]
-}
-
-If instead you want to only run the webhook on any objects whose namespace is associated with the &#34;environment&#34; of &#34;prod&#34; or &#34;staging&#34;; you will set the selector as follows: &#34;namespaceSelector&#34;: {
-&#34;matchExpressions&#34;: [
-{
-&#34;key&#34;: &#34;environment&#34;,
-&#34;operator&#34;: &#34;In&#34;,
-&#34;values&#34;: [
-&#34;prod&#34;,
-&#34;staging&#34;
-]
-}
-]
-}
-
-See https://kubernetes.io/docs/concepts/overview/working-with-objects/labels for more examples of label selectors.
-
-Default to the empty LabelSelector, which matches everything.||
+|**namespaceSelector**|[LabelSelector](#labelselector)|NamespaceSelector decides whether to run the webhook on an object based on whether the namespace for that object matches the selector. If the object itself is a namespace, the matching is performed on object.metadata.labels. If the object is another cluster scoped resource, it never skips the webhook.&lt;br&gt;&lt;br&gt;For example, to run the webhook on any objects whose namespace is not associated with &#34;runlevel&#34; of &#34;0&#34; or &#34;1&#34;;  you will set the selector as follows: &#34;namespaceSelector&#34;: {&lt;br&gt;&#34;matchExpressions&#34;: [&lt;br&gt;{&lt;br&gt;&#34;key&#34;: &#34;runlevel&#34;,&lt;br&gt;&#34;operator&#34;: &#34;NotIn&#34;,&lt;br&gt;&#34;values&#34;: [&lt;br&gt;&#34;0&#34;,&lt;br&gt;&#34;1&#34;&lt;br&gt;]&lt;br&gt;}&lt;br&gt;]&lt;br&gt;}&lt;br&gt;&lt;br&gt;If instead you want to only run the webhook on any objects whose namespace is associated with the &#34;environment&#34; of &#34;prod&#34; or &#34;staging&#34;; you will set the selector as follows: &#34;namespaceSelector&#34;: {&lt;br&gt;&#34;matchExpressions&#34;: [&lt;br&gt;{&lt;br&gt;&#34;key&#34;: &#34;environment&#34;,&lt;br&gt;&#34;operator&#34;: &#34;In&#34;,&lt;br&gt;&#34;values&#34;: [&lt;br&gt;&#34;prod&#34;,&lt;br&gt;&#34;staging&#34;&lt;br&gt;]&lt;br&gt;}&lt;br&gt;]&lt;br&gt;}&lt;br&gt;&lt;br&gt;See https://kubernetes.io/docs/concepts/overview/working-with-objects/labels for more examples of label selectors.&lt;br&gt;&lt;br&gt;Default to the empty LabelSelector, which matches everything.||
 |**objectSelector**|[LabelSelector](#labelselector)|ObjectSelector decides whether to run the webhook based on if the object has matching labels. objectSelector is evaluated against both the oldObject and newObject that would be sent to the webhook, and is considered to match if either object matches the selector. A null object (oldObject in the case of create, or newObject in the case of delete) or an object that cannot have labels (like a DeploymentRollback or a PodProxyOptions object) is not considered to match. Use the object selector only if the webhook is opt-in, because end users may skip the admission webhook by setting the labels. Default to the empty LabelSelector, which matches everything.||
 |**rules**|[[RuleWithOperations](#rulewithoperations)]|Rules describes what operations on what resources/subresources the webhook cares about. The webhook cares about an operation if it matches _any_ Rule. However, in order to prevent ValidatingAdmissionWebhooks and MutatingAdmissionWebhooks from putting the cluster in a state which cannot be recovered from without completely disabling the plugin, ValidatingAdmissionWebhooks and MutatingAdmissionWebhooks are never called on admission requests for ValidatingWebhookConfiguration and MutatingWebhookConfiguration objects.||
 |**sideEffects** `required`|str|SideEffects states whether this webhook has side effects. Acceptable values are: None, NoneOnDryRun (webhooks created via v1beta1 may also specify Some or Unknown). Webhooks with side effects MUST implement a reconciliation system, since a request may be rejected by a future step in the admission chain and the side effects therefore need to be undone. Requests with the dryRun attribute will be auto-rejected if they match a webhook with sideEffects == Unknown or Some.||
@@ -245,20 +133,8 @@ WebhookClientConfig contains the information to make a TLS connection with the w
 | name | type | description | default value |
 | --- | --- | --- | --- |
 |**caBundle**|str|`caBundle` is a PEM encoded CA bundle which will be used to validate the webhook&#39;s server certificate. If unspecified, system trust roots on the apiserver are used.||
-|**service**|[ServiceReference](#servicereference)|`service` is a reference to the service for this webhook. Either `service` or `url` must be specified.
-
-If the webhook is running within the cluster, then you should use `service`.||
-|**url**|str|`url` gives the location of the webhook, in standard URL form (`scheme://host:port/path`). Exactly one of `url` or `service` must be specified.
-
-The `host` should not refer to a service running in the cluster; use the `service` field instead. The host might be resolved via external DNS in some apiservers (e.g., `kube-apiserver` cannot resolve in-cluster DNS as that would be a layering violation). `host` may also be an IP address.
-
-Please note that using `localhost` or `127.0.0.1` as a `host` is risky unless you take great care to run this webhook on all hosts which run an apiserver which might need to make calls to this webhook. Such installs are likely to be non-portable, i.e., not easy to turn up in a new cluster.
-
-The scheme must be &#34;https&#34;; the URL must begin with &#34;https://&#34;.
-
-A path is optional, and if present may be any string permissible in a URL. You may use the path to pass an arbitrary string to the webhook, for example, a cluster identifier.
-
-Attempting to use a user or basic auth e.g. &#34;user:password@&#34; is not allowed. Fragments (&#34;#...&#34;) and query parameters (&#34;?...&#34;) are not allowed, either.||
+|**service**|[ServiceReference](#servicereference)|`service` is a reference to the service for this webhook. Either `service` or `url` must be specified.&lt;br&gt;&lt;br&gt;If the webhook is running within the cluster, then you should use `service`.||
+|**url**|str|`url` gives the location of the webhook, in standard URL form (`scheme://host:port/path`). Exactly one of `url` or `service` must be specified.&lt;br&gt;&lt;br&gt;The `host` should not refer to a service running in the cluster; use the `service` field instead. The host might be resolved via external DNS in some apiservers (e.g., `kube-apiserver` cannot resolve in-cluster DNS as that would be a layering violation). `host` may also be an IP address.&lt;br&gt;&lt;br&gt;Please note that using `localhost` or `127.0.0.1` as a `host` is risky unless you take great care to run this webhook on all hosts which run an apiserver which might need to make calls to this webhook. Such installs are likely to be non-portable, i.e., not easy to turn up in a new cluster.&lt;br&gt;&lt;br&gt;The scheme must be &#34;https&#34;; the URL must begin with &#34;https://&#34;.&lt;br&gt;&lt;br&gt;A path is optional, and if present may be any string permissible in a URL. You may use the path to pass an arbitrary string to the webhook, for example, a cluster identifier.&lt;br&gt;&lt;br&gt;Attempting to use a user or basic auth e.g. &#34;user:password@&#34; is not allowed. Fragments (&#34;#...&#34;) and query parameters (&#34;?...&#34;) are not allowed, either.||
 ### AuditAnnotation
 
 AuditAnnotation describes how to produce an audit annotation for an API request.
@@ -267,18 +143,8 @@ AuditAnnotation describes how to produce an audit annotation for an API request.
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**key** `required`|str|key specifies the audit annotation key. The audit annotation keys of a ValidatingAdmissionPolicy must be unique. The key must be a qualified name ([A-Za-z0-9][-A-Za-z0-9_.]*) no more than 63 bytes in length.
-
-The key is combined with the resource name of the ValidatingAdmissionPolicy to construct an audit annotation key: &#34;{ValidatingAdmissionPolicy name}/{key}&#34;.
-
-If an admission webhook uses the same resource name as this ValidatingAdmissionPolicy and the same audit annotation key, the annotation key will be identical. In this case, the first annotation written with the key will be included in the audit event and all subsequent annotations with the same key will be discarded.
-
-Required.||
-|**valueExpression** `required`|str|valueExpression represents the expression which is evaluated by CEL to produce an audit annotation value. The expression must evaluate to either a string or null value. If the expression evaluates to a string, the audit annotation is included with the string value. If the expression evaluates to null or empty string the audit annotation will be omitted. The valueExpression may be no longer than 5kb in length. If the result of the valueExpression is more than 10kb in length, it will be truncated to 10kb.
-
-If multiple ValidatingAdmissionPolicyBinding resources match an API request, then the valueExpression will be evaluated for each binding. All unique values produced by the valueExpressions will be joined together in a comma-separated list.
-
-Required.||
+|**key** `required`|str|key specifies the audit annotation key. The audit annotation keys of a ValidatingAdmissionPolicy must be unique. The key must be a qualified name ([A-Za-z0-9][-A-Za-z0-9_.]*) no more than 63 bytes in length.&lt;br&gt;&lt;br&gt;The key is combined with the resource name of the ValidatingAdmissionPolicy to construct an audit annotation key: &#34;{ValidatingAdmissionPolicy name}/{key}&#34;.&lt;br&gt;&lt;br&gt;If an admission webhook uses the same resource name as this ValidatingAdmissionPolicy and the same audit annotation key, the annotation key will be identical. In this case, the first annotation written with the key will be included in the audit event and all subsequent annotations with the same key will be discarded.&lt;br&gt;&lt;br&gt;Required.||
+|**valueExpression** `required`|str|valueExpression represents the expression which is evaluated by CEL to produce an audit annotation value. The expression must evaluate to either a string or null value. If the expression evaluates to a string, the audit annotation is included with the string value. If the expression evaluates to null or empty string the audit annotation will be omitted. The valueExpression may be no longer than 5kb in length. If the result of the valueExpression is more than 10kb in length, it will be truncated to 10kb.&lt;br&gt;&lt;br&gt;If multiple ValidatingAdmissionPolicyBinding resources match an API request, then the valueExpression will be evaluated for each binding. All unique values produced by the valueExpressions will be joined together in a comma-separated list.&lt;br&gt;&lt;br&gt;Required.||
 ### ExpressionWarning
 
 ExpressionWarning is a warning information that targets a specific expression.
@@ -297,18 +163,8 @@ k8s api admissionregistration v1alpha1 match condition
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**expression** `required`|str|Expression represents the expression which will be evaluated by CEL. Must evaluate to bool. CEL expressions have access to the contents of the AdmissionRequest and Authorizer, organized into CEL variables:
-
-&#39;object&#39; - The object from the incoming request. The value is null for DELETE requests. &#39;oldObject&#39; - The existing object. The value is null for CREATE requests. &#39;request&#39; - Attributes of the admission request(/pkg/apis/admission/types.go#AdmissionRequest). &#39;authorizer&#39; - A CEL Authorizer. May be used to perform authorization checks for the principal (user or service account) of the request.
-See https://pkg.go.dev/k8s.io/apiserver/pkg/cel/library#Authz
-&#39;authorizer.requestResource&#39; - A CEL ResourceCheck constructed from the &#39;authorizer&#39; and configured with the
-request resource.
-Documentation on CEL: https://kubernetes.io/docs/reference/using-api/cel/
-
-Required.||
-|**name** `required`|str|Name is an identifier for this match condition, used for strategic merging of MatchConditions, as well as providing an identifier for logging purposes. A good name should be descriptive of the associated expression. Name must be a qualified name consisting of alphanumeric characters, &#39;-&#39;, &#39;_&#39; or &#39;.&#39;, and must start and end with an alphanumeric character (e.g. &#39;MyName&#39;,  or &#39;my.name&#39;,  or &#39;123-abc&#39;, regex used for validation is &#39;([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]&#39;) with an optional DNS subdomain prefix and &#39;/&#39; (e.g. &#39;example.com/MyName&#39;)
-
-Required.||
+|**expression** `required`|str|Expression represents the expression which will be evaluated by CEL. Must evaluate to bool. CEL expressions have access to the contents of the AdmissionRequest and Authorizer, organized into CEL variables:&lt;br&gt;&lt;br&gt;&#39;object&#39; - The object from the incoming request. The value is null for DELETE requests. &#39;oldObject&#39; - The existing object. The value is null for CREATE requests. &#39;request&#39; - Attributes of the admission request(/pkg/apis/admission/types.go#AdmissionRequest). &#39;authorizer&#39; - A CEL Authorizer. May be used to perform authorization checks for the principal (user or service account) of the request.&lt;br&gt;See https://pkg.go.dev/k8s.io/apiserver/pkg/cel/library#Authz&lt;br&gt;&#39;authorizer.requestResource&#39; - A CEL ResourceCheck constructed from the &#39;authorizer&#39; and configured with the&lt;br&gt;request resource.&lt;br&gt;Documentation on CEL: https://kubernetes.io/docs/reference/using-api/cel/&lt;br&gt;&lt;br&gt;Required.||
+|**name** `required`|str|Name is an identifier for this match condition, used for strategic merging of MatchConditions, as well as providing an identifier for logging purposes. A good name should be descriptive of the associated expression. Name must be a qualified name consisting of alphanumeric characters, &#39;-&#39;, &#39;_&#39; or &#39;.&#39;, and must start and end with an alphanumeric character (e.g. &#39;MyName&#39;,  or &#39;my.name&#39;,  or &#39;123-abc&#39;, regex used for validation is &#39;([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]&#39;) with an optional DNS subdomain prefix and &#39;/&#39; (e.g. &#39;example.com/MyName&#39;)&lt;br&gt;&lt;br&gt;Required.||
 ### MatchResources
 
 MatchResources decides whether to run the admission control policy on an object based on whether it meets the match criteria. The exclude rules take precedence over include rules (if a resource matches both, it is excluded)
@@ -318,44 +174,8 @@ MatchResources decides whether to run the admission control policy on an object 
 | name | type | description | default value |
 | --- | --- | --- | --- |
 |**excludeResourceRules**|[[NamedRuleWithOperations](#namedrulewithoperations)]|ExcludeResourceRules describes what operations on what resources/subresources the ValidatingAdmissionPolicy should not care about. The exclude rules take precedence over include rules (if a resource matches both, it is excluded)||
-|**matchPolicy**|str|matchPolicy defines how the &#34;MatchResources&#34; list is used to match incoming requests. Allowed values are &#34;Exact&#34; or &#34;Equivalent&#34;.
-
-- Exact: match a request only if it exactly matches a specified rule. For example, if deployments can be modified via apps/v1, apps/v1beta1, and extensions/v1beta1, but &#34;rules&#34; only included `apiGroups:[&#34;apps&#34;], apiVersions:[&#34;v1&#34;], resources: [&#34;deployments&#34;]`, a request to apps/v1beta1 or extensions/v1beta1 would not be sent to the ValidatingAdmissionPolicy.
-
-- Equivalent: match a request if modifies a resource listed in rules, even via another API group or version. For example, if deployments can be modified via apps/v1, apps/v1beta1, and extensions/v1beta1, and &#34;rules&#34; only included `apiGroups:[&#34;apps&#34;], apiVersions:[&#34;v1&#34;], resources: [&#34;deployments&#34;]`, a request to apps/v1beta1 or extensions/v1beta1 would be converted to apps/v1 and sent to the ValidatingAdmissionPolicy.
-
-Defaults to &#34;Equivalent&#34;||
-|**namespaceSelector**|[LabelSelector](#labelselector)|NamespaceSelector decides whether to run the admission control policy on an object based on whether the namespace for that object matches the selector. If the object itself is a namespace, the matching is performed on object.metadata.labels. If the object is another cluster scoped resource, it never skips the policy.
-
-For example, to run the webhook on any objects whose namespace is not associated with &#34;runlevel&#34; of &#34;0&#34; or &#34;1&#34;;  you will set the selector as follows: &#34;namespaceSelector&#34;: {
-&#34;matchExpressions&#34;: [
-{
-&#34;key&#34;: &#34;runlevel&#34;,
-&#34;operator&#34;: &#34;NotIn&#34;,
-&#34;values&#34;: [
-&#34;0&#34;,
-&#34;1&#34;
-]
-}
-]
-}
-
-If instead you want to only run the policy on any objects whose namespace is associated with the &#34;environment&#34; of &#34;prod&#34; or &#34;staging&#34;; you will set the selector as follows: &#34;namespaceSelector&#34;: {
-&#34;matchExpressions&#34;: [
-{
-&#34;key&#34;: &#34;environment&#34;,
-&#34;operator&#34;: &#34;In&#34;,
-&#34;values&#34;: [
-&#34;prod&#34;,
-&#34;staging&#34;
-]
-}
-]
-}
-
-See https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/ for more examples of label selectors.
-
-Default to the empty LabelSelector, which matches everything.||
+|**matchPolicy**|str|matchPolicy defines how the &#34;MatchResources&#34; list is used to match incoming requests. Allowed values are &#34;Exact&#34; or &#34;Equivalent&#34;.&lt;br&gt;&lt;br&gt;- Exact: match a request only if it exactly matches a specified rule. For example, if deployments can be modified via apps/v1, apps/v1beta1, and extensions/v1beta1, but &#34;rules&#34; only included `apiGroups:[&#34;apps&#34;], apiVersions:[&#34;v1&#34;], resources: [&#34;deployments&#34;]`, a request to apps/v1beta1 or extensions/v1beta1 would not be sent to the ValidatingAdmissionPolicy.&lt;br&gt;&lt;br&gt;- Equivalent: match a request if modifies a resource listed in rules, even via another API group or version. For example, if deployments can be modified via apps/v1, apps/v1beta1, and extensions/v1beta1, and &#34;rules&#34; only included `apiGroups:[&#34;apps&#34;], apiVersions:[&#34;v1&#34;], resources: [&#34;deployments&#34;]`, a request to apps/v1beta1 or extensions/v1beta1 would be converted to apps/v1 and sent to the ValidatingAdmissionPolicy.&lt;br&gt;&lt;br&gt;Defaults to &#34;Equivalent&#34;||
+|**namespaceSelector**|[LabelSelector](#labelselector)|NamespaceSelector decides whether to run the admission control policy on an object based on whether the namespace for that object matches the selector. If the object itself is a namespace, the matching is performed on object.metadata.labels. If the object is another cluster scoped resource, it never skips the policy.&lt;br&gt;&lt;br&gt;For example, to run the webhook on any objects whose namespace is not associated with &#34;runlevel&#34; of &#34;0&#34; or &#34;1&#34;;  you will set the selector as follows: &#34;namespaceSelector&#34;: {&lt;br&gt;&#34;matchExpressions&#34;: [&lt;br&gt;{&lt;br&gt;&#34;key&#34;: &#34;runlevel&#34;,&lt;br&gt;&#34;operator&#34;: &#34;NotIn&#34;,&lt;br&gt;&#34;values&#34;: [&lt;br&gt;&#34;0&#34;,&lt;br&gt;&#34;1&#34;&lt;br&gt;]&lt;br&gt;}&lt;br&gt;]&lt;br&gt;}&lt;br&gt;&lt;br&gt;If instead you want to only run the policy on any objects whose namespace is associated with the &#34;environment&#34; of &#34;prod&#34; or &#34;staging&#34;; you will set the selector as follows: &#34;namespaceSelector&#34;: {&lt;br&gt;&#34;matchExpressions&#34;: [&lt;br&gt;{&lt;br&gt;&#34;key&#34;: &#34;environment&#34;,&lt;br&gt;&#34;operator&#34;: &#34;In&#34;,&lt;br&gt;&#34;values&#34;: [&lt;br&gt;&#34;prod&#34;,&lt;br&gt;&#34;staging&#34;&lt;br&gt;]&lt;br&gt;}&lt;br&gt;]&lt;br&gt;}&lt;br&gt;&lt;br&gt;See https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/ for more examples of label selectors.&lt;br&gt;&lt;br&gt;Default to the empty LabelSelector, which matches everything.||
 |**objectSelector**|[LabelSelector](#labelselector)|ObjectSelector decides whether to run the validation based on if the object has matching labels. objectSelector is evaluated against both the oldObject and newObject that would be sent to the cel validation, and is considered to match if either object matches the selector. A null object (oldObject in the case of create, or newObject in the case of delete) or an object that cannot have labels (like a DeploymentRollback or a PodProxyOptions object) is not considered to match. Use the object selector only if the webhook is opt-in, because end users may skip the admission webhook by setting the labels. Default to the empty LabelSelector, which matches everything.||
 |**resourceRules**|[[NamedRuleWithOperations](#namedrulewithoperations)]|ResourceRules describes what operations on what resources/subresources the ValidatingAdmissionPolicy matches. The policy cares about an operation if it matches _any_ Rule.||
 ### NamedRuleWithOperations
@@ -370,13 +190,7 @@ NamedRuleWithOperations is a tuple of Operations and Resources with ResourceName
 |**apiVersions**|[str]|APIVersions is the API versions the resources belong to. &#39;*&#39; is all versions. If &#39;*&#39; is present, the length of the slice must be one. Required.||
 |**operations**|[str]|Operations is the operations the admission hook cares about - CREATE, UPDATE, DELETE, CONNECT or * for all of those operations and any future admission operations that are added. If &#39;*&#39; is present, the length of the slice must be one. Required.||
 |**resourceNames**|[str]|ResourceNames is an optional white list of names that the rule applies to.  An empty set means that everything is allowed.||
-|**resources**|[str]|Resources is a list of resources this rule applies to.
-
-For example: &#39;pods&#39; means pods. &#39;pods/log&#39; means the log subresource of pods. &#39;*&#39; means all resources, but not subresources. &#39;pods/*&#39; means all subresources of pods. &#39;*/scale&#39; means all scale subresources. &#39;*/*&#39; means all resources and their subresources.
-
-If wildcard is present, the validation rule will ensure resources do not overlap with each other.
-
-Depending on the enclosing object, subresources might not be allowed. Required.||
+|**resources**|[str]|Resources is a list of resources this rule applies to.&lt;br&gt;&lt;br&gt;For example: &#39;pods&#39; means pods. &#39;pods/log&#39; means the log subresource of pods. &#39;*&#39; means all resources, but not subresources. &#39;pods/*&#39; means all subresources of pods. &#39;*/scale&#39; means all scale subresources. &#39;*/*&#39; means all resources and their subresources.&lt;br&gt;&lt;br&gt;If wildcard is present, the validation rule will ensure resources do not overlap with each other.&lt;br&gt;&lt;br&gt;Depending on the enclosing object, subresources might not be allowed. Required.||
 |**scope**|str|scope specifies the scope of this rule. Valid values are &#34;Cluster&#34;, &#34;Namespaced&#34;, and &#34;*&#34; &#34;Cluster&#34; means that only cluster-scoped resources will match this rule. Namespace API objects are cluster-scoped. &#34;Namespaced&#34; means that only namespaced resources will match this rule. &#34;*&#34; means that there are no scope restrictions. Subresources match the scope of their parent resource. Default is &#34;*&#34;.||
 ### ParamKind
 
@@ -454,25 +268,7 @@ ValidatingAdmissionPolicyBindingSpec is the specification of the ValidatingAdmis
 |**matchResources**|[MatchResources](#matchresources)|MatchResources declares what resources match this binding and will be validated by it. Note that this is intersected with the policy&#39;s matchConstraints, so only requests that are matched by the policy can be selected by this. If this is unset, all resources matched by the policy are validated by this binding When resourceRules is unset, it does not constrain resource matching. If a resource is matched by the other fields of this object, it will be validated. Note that this is differs from ValidatingAdmissionPolicy matchConstraints, where resourceRules are required.||
 |**paramRef**|[ParamRef](#paramref)|ParamRef specifies the parameter resource used to configure the admission control policy. It should point to a resource of the type specified in ParamKind of the bound ValidatingAdmissionPolicy. If the policy specifies a ParamKind and the resource referred to by ParamRef does not exist, this binding is considered mis-configured and the FailurePolicy of the ValidatingAdmissionPolicy applied.||
 |**policyName**|str|PolicyName references a ValidatingAdmissionPolicy name which the ValidatingAdmissionPolicyBinding binds to. If the referenced resource does not exist, this binding is considered invalid and will be ignored Required.||
-|**validationActions**|[str]|validationActions declares how Validations of the referenced ValidatingAdmissionPolicy are enforced. If a validation evaluates to false it is always enforced according to these actions.
-
-Failures defined by the ValidatingAdmissionPolicy&#39;s FailurePolicy are enforced according to these actions only if the FailurePolicy is set to Fail, otherwise the failures are ignored. This includes compilation errors, runtime errors and misconfigurations of the policy.
-
-validationActions is declared as a set of action values. Order does not matter. validationActions may not contain duplicates of the same action.
-
-The supported actions values are:
-
-&#34;Deny&#34; specifies that a validation failure results in a denied request.
-
-&#34;Warn&#34; specifies that a validation failure is reported to the request client in HTTP Warning headers, with a warning code of 299. Warnings can be sent both for allowed or denied admission responses.
-
-&#34;Audit&#34; specifies that a validation failure is included in the published audit event for the request. The audit event will contain a `validation.policy.admission.k8s.io/validation_failure` audit annotation with a value containing the details of the validation failures, formatted as a JSON list of objects, each with the following fields: - message: The validation failure message string - policy: The resource name of the ValidatingAdmissionPolicy - binding: The resource name of the ValidatingAdmissionPolicyBinding - expressionIndex: The index of the failed validations in the ValidatingAdmissionPolicy - validationActions: The enforcement actions enacted for the validation failure Example audit annotation: `&#34;validation.policy.admission.k8s.io/validation_failure&#34;: &#34;[{&#34;message&#34;: &#34;Invalid value&#34;, {&#34;policy&#34;: &#34;policy.example.com&#34;, {&#34;binding&#34;: &#34;policybinding.example.com&#34;, {&#34;expressionIndex&#34;: &#34;1&#34;, {&#34;validationActions&#34;: [&#34;Audit&#34;]}]&#34;`
-
-Clients should expect to handle additional values by ignoring any values not recognized.
-
-&#34;Deny&#34; and &#34;Warn&#34; may not be used together since this combination needlessly duplicates the validation failure both in the API response body and the HTTP warning headers.
-
-Required.||
+|**validationActions**|[str]|validationActions declares how Validations of the referenced ValidatingAdmissionPolicy are enforced. If a validation evaluates to false it is always enforced according to these actions.&lt;br&gt;&lt;br&gt;Failures defined by the ValidatingAdmissionPolicy&#39;s FailurePolicy are enforced according to these actions only if the FailurePolicy is set to Fail, otherwise the failures are ignored. This includes compilation errors, runtime errors and misconfigurations of the policy.&lt;br&gt;&lt;br&gt;validationActions is declared as a set of action values. Order does not matter. validationActions may not contain duplicates of the same action.&lt;br&gt;&lt;br&gt;The supported actions values are:&lt;br&gt;&lt;br&gt;&#34;Deny&#34; specifies that a validation failure results in a denied request.&lt;br&gt;&lt;br&gt;&#34;Warn&#34; specifies that a validation failure is reported to the request client in HTTP Warning headers, with a warning code of 299. Warnings can be sent both for allowed or denied admission responses.&lt;br&gt;&lt;br&gt;&#34;Audit&#34; specifies that a validation failure is included in the published audit event for the request. The audit event will contain a `validation.policy.admission.k8s.io/validation_failure` audit annotation with a value containing the details of the validation failures, formatted as a JSON list of objects, each with the following fields: - message: The validation failure message string - policy: The resource name of the ValidatingAdmissionPolicy - binding: The resource name of the ValidatingAdmissionPolicyBinding - expressionIndex: The index of the failed validations in the ValidatingAdmissionPolicy - validationActions: The enforcement actions enacted for the validation failure Example audit annotation: `&#34;validation.policy.admission.k8s.io/validation_failure&#34;: &#34;[{&#34;message&#34;: &#34;Invalid value&#34;, {&#34;policy&#34;: &#34;policy.example.com&#34;, {&#34;binding&#34;: &#34;policybinding.example.com&#34;, {&#34;expressionIndex&#34;: &#34;1&#34;, {&#34;validationActions&#34;: [&#34;Audit&#34;]}]&#34;`&lt;br&gt;&lt;br&gt;Clients should expect to handle additional values by ignoring any values not recognized.&lt;br&gt;&lt;br&gt;&#34;Deny&#34; and &#34;Warn&#34; may not be used together since this combination needlessly duplicates the validation failure both in the API response body and the HTTP warning headers.&lt;br&gt;&lt;br&gt;Required.||
 ### ValidatingAdmissionPolicyList
 
 ValidatingAdmissionPolicyList is a list of ValidatingAdmissionPolicy.
@@ -494,25 +290,8 @@ ValidatingAdmissionPolicySpec is the specification of the desired behavior of th
 | name | type | description | default value |
 | --- | --- | --- | --- |
 |**auditAnnotations**|[[AuditAnnotation](#auditannotation)]|auditAnnotations contains CEL expressions which are used to produce audit annotations for the audit event of the API request. validations and auditAnnotations may not both be empty; a least one of validations or auditAnnotations is required.||
-|**failurePolicy**|str|failurePolicy defines how to handle failures for the admission policy. Failures can occur from CEL expression parse errors, type check errors, runtime errors and invalid or mis-configured policy definitions or bindings.
-
-A policy is invalid if spec.paramKind refers to a non-existent Kind. A binding is invalid if spec.paramRef.name refers to a non-existent resource.
-
-failurePolicy does not define how validations that evaluate to false are handled.
-
-When failurePolicy is set to Fail, ValidatingAdmissionPolicyBinding validationActions define how failures are enforced.
-
-Allowed values are Ignore or Fail. Defaults to Fail.||
-|**matchConditions**|[[MatchCondition](#matchcondition)]|MatchConditions is a list of conditions that must be met for a request to be validated. Match conditions filter requests that have already been matched by the rules, namespaceSelector, and objectSelector. An empty list of matchConditions matches all requests. There are a maximum of 64 match conditions allowed.
-
-If a parameter object is provided, it can be accessed via the `params` handle in the same manner as validation expressions.
-
-The exact matching logic is (in order):
-1. If ANY matchCondition evaluates to FALSE, the policy is skipped.
-2. If ALL matchConditions evaluate to TRUE, the policy is evaluated.
-3. If any matchCondition evaluates to an error (but none are FALSE):
-- If failurePolicy=Fail, reject the request
-- If failurePolicy=Ignore, the policy is skipped||
+|**failurePolicy**|str|failurePolicy defines how to handle failures for the admission policy. Failures can occur from CEL expression parse errors, type check errors, runtime errors and invalid or mis-configured policy definitions or bindings.&lt;br&gt;&lt;br&gt;A policy is invalid if spec.paramKind refers to a non-existent Kind. A binding is invalid if spec.paramRef.name refers to a non-existent resource.&lt;br&gt;&lt;br&gt;failurePolicy does not define how validations that evaluate to false are handled.&lt;br&gt;&lt;br&gt;When failurePolicy is set to Fail, ValidatingAdmissionPolicyBinding validationActions define how failures are enforced.&lt;br&gt;&lt;br&gt;Allowed values are Ignore or Fail. Defaults to Fail.||
+|**matchConditions**|[[MatchCondition](#matchcondition)]|MatchConditions is a list of conditions that must be met for a request to be validated. Match conditions filter requests that have already been matched by the rules, namespaceSelector, and objectSelector. An empty list of matchConditions matches all requests. There are a maximum of 64 match conditions allowed.&lt;br&gt;&lt;br&gt;If a parameter object is provided, it can be accessed via the `params` handle in the same manner as validation expressions.&lt;br&gt;&lt;br&gt;The exact matching logic is (in order):&lt;br&gt;1. If ANY matchCondition evaluates to FALSE, the policy is skipped.&lt;br&gt;2. If ALL matchConditions evaluate to TRUE, the policy is evaluated.&lt;br&gt;3. If any matchCondition evaluates to an error (but none are FALSE):&lt;br&gt;- If failurePolicy=Fail, reject the request&lt;br&gt;- If failurePolicy=Ignore, the policy is skipped||
 |**matchConstraints**|[MatchResources](#matchresources)|MatchConstraints specifies what resources this policy is designed to validate. The AdmissionPolicy cares about a request if it matches _all_ Constraints. However, in order to prevent clusters from being put into an unstable state that cannot be recovered from via the API ValidatingAdmissionPolicy cannot match ValidatingAdmissionPolicy and ValidatingAdmissionPolicyBinding. Required.||
 |**paramKind**|[ParamKind](#paramkind)|ParamKind specifies the kind of resources used to parameterize this policy. If absent, there are no parameters for this policy and the param CEL variable will not be provided to validation expressions. If ParamKind refers to a non-existent kind, this policy definition is mis-configured and the FailurePolicy is applied. If paramKind is specified but paramRef is unset in ValidatingAdmissionPolicyBinding, the params variable will be null.||
 |**validations**|[[Validation](#validation)]|Validations contain CEL expressions which is used to apply the validation. Validations and AuditAnnotations may not both be empty; a minimum of one Validations or AuditAnnotations is required.||
@@ -535,30 +314,7 @@ Validation specifies the CEL expression which is used to apply the validation.
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**expression** `required`|str|Expression represents the expression which will be evaluated by CEL. ref: https://github.com/google/cel-spec CEL expressions have access to the contents of the API request/response, organized into CEL variables as well as some other useful variables:
-
-- &#39;object&#39; - The object from the incoming request. The value is null for DELETE requests. - &#39;oldObject&#39; - The existing object. The value is null for CREATE requests. - &#39;request&#39; - Attributes of the API request([ref](/pkg/apis/admission/types.go#AdmissionRequest)). - &#39;params&#39; - Parameter resource referred to by the policy binding being evaluated. Only populated if the policy has a ParamKind. - &#39;authorizer&#39; - A CEL Authorizer. May be used to perform authorization checks for the principal (user or service account) of the request.
-See https://pkg.go.dev/k8s.io/apiserver/pkg/cel/library#Authz
-- &#39;authorizer.requestResource&#39; - A CEL ResourceCheck constructed from the &#39;authorizer&#39; and configured with the
-request resource.
-
-The `apiVersion`, `kind`, `metadata.name` and `metadata.generateName` are always accessible from the root of the object. No other metadata properties are accessible.
-
-Only property names of the form `[a-zA-Z_.-/][a-zA-Z0-9_.-/]*` are accessible. Accessible property names are escaped according to the following rules when accessed in the expression: - &#39;__&#39; escapes to &#39;__underscores__&#39; - &#39;.&#39; escapes to &#39;__dot__&#39; - &#39;-&#39; escapes to &#39;__dash__&#39; - &#39;/&#39; escapes to &#39;__slash__&#39; - Property names that exactly match a CEL RESERVED keyword escape to &#39;__{keyword}__&#39;. The keywords are:
-&#34;true&#34;, &#34;false&#34;, &#34;null&#34;, &#34;in&#34;, &#34;as&#34;, &#34;break&#34;, &#34;const&#34;, &#34;continue&#34;, &#34;else&#34;, &#34;for&#34;, &#34;function&#34;, &#34;if&#34;,
-&#34;import&#34;, &#34;let&#34;, &#34;loop&#34;, &#34;package&#34;, &#34;namespace&#34;, &#34;return&#34;.
-Examples:
-- Expression accessing a property named &#34;namespace&#34;: {&#34;Expression&#34;: &#34;object.__namespace__ &gt; 0&#34;}
-- Expression accessing a property named &#34;x-prop&#34;: {&#34;Expression&#34;: &#34;object.x__dash__prop &gt; 0&#34;}
-- Expression accessing a property named &#34;redact__d&#34;: {&#34;Expression&#34;: &#34;object.redact__underscores__d &gt; 0&#34;}
-
-Equality on arrays with list type of &#39;set&#39; or &#39;map&#39; ignores element order, i.e. [1, 2] == [2, 1]. Concatenation on arrays with x-kubernetes-list-type use the semantics of the list type:
-- &#39;set&#39;: `X + Y` performs a union where the array positions of all elements in `X` are preserved and
-non-intersecting elements in `Y` are appended, retaining their partial order.
-- &#39;map&#39;: `X + Y` performs a merge where the array positions of all keys in `X` are preserved but the values
-are overwritten by values in `Y` when the key sets of `X` and `Y` intersect. Elements in `Y` with
-non-intersecting keys are appended, retaining their partial order.
-Required.||
+|**expression** `required`|str|Expression represents the expression which will be evaluated by CEL. ref: https://github.com/google/cel-spec CEL expressions have access to the contents of the API request/response, organized into CEL variables as well as some other useful variables:&lt;br&gt;&lt;br&gt;- &#39;object&#39; - The object from the incoming request. The value is null for DELETE requests. - &#39;oldObject&#39; - The existing object. The value is null for CREATE requests. - &#39;request&#39; - Attributes of the API request([ref](/pkg/apis/admission/types.go#AdmissionRequest)). - &#39;params&#39; - Parameter resource referred to by the policy binding being evaluated. Only populated if the policy has a ParamKind. - &#39;authorizer&#39; - A CEL Authorizer. May be used to perform authorization checks for the principal (user or service account) of the request.&lt;br&gt;See https://pkg.go.dev/k8s.io/apiserver/pkg/cel/library#Authz&lt;br&gt;- &#39;authorizer.requestResource&#39; - A CEL ResourceCheck constructed from the &#39;authorizer&#39; and configured with the&lt;br&gt;request resource.&lt;br&gt;&lt;br&gt;The `apiVersion`, `kind`, `metadata.name` and `metadata.generateName` are always accessible from the root of the object. No other metadata properties are accessible.&lt;br&gt;&lt;br&gt;Only property names of the form `[a-zA-Z_.-/][a-zA-Z0-9_.-/]*` are accessible. Accessible property names are escaped according to the following rules when accessed in the expression: - &#39;__&#39; escapes to &#39;__underscores__&#39; - &#39;.&#39; escapes to &#39;__dot__&#39; - &#39;-&#39; escapes to &#39;__dash__&#39; - &#39;/&#39; escapes to &#39;__slash__&#39; - Property names that exactly match a CEL RESERVED keyword escape to &#39;__{keyword}__&#39;. The keywords are:&lt;br&gt;&#34;true&#34;, &#34;false&#34;, &#34;null&#34;, &#34;in&#34;, &#34;as&#34;, &#34;break&#34;, &#34;const&#34;, &#34;continue&#34;, &#34;else&#34;, &#34;for&#34;, &#34;function&#34;, &#34;if&#34;,&lt;br&gt;&#34;import&#34;, &#34;let&#34;, &#34;loop&#34;, &#34;package&#34;, &#34;namespace&#34;, &#34;return&#34;.&lt;br&gt;Examples:&lt;br&gt;- Expression accessing a property named &#34;namespace&#34;: {&#34;Expression&#34;: &#34;object.__namespace__ &gt; 0&#34;}&lt;br&gt;- Expression accessing a property named &#34;x-prop&#34;: {&#34;Expression&#34;: &#34;object.x__dash__prop &gt; 0&#34;}&lt;br&gt;- Expression accessing a property named &#34;redact__d&#34;: {&#34;Expression&#34;: &#34;object.redact__underscores__d &gt; 0&#34;}&lt;br&gt;&lt;br&gt;Equality on arrays with list type of &#39;set&#39; or &#39;map&#39; ignores element order, i.e. [1, 2] == [2, 1]. Concatenation on arrays with x-kubernetes-list-type use the semantics of the list type:&lt;br&gt;- &#39;set&#39;: `X + Y` performs a union where the array positions of all elements in `X` are preserved and&lt;br&gt;non-intersecting elements in `Y` are appended, retaining their partial order.&lt;br&gt;- &#39;map&#39;: `X + Y` performs a merge where the array positions of all keys in `X` are preserved but the values&lt;br&gt;are overwritten by values in `Y` when the key sets of `X` and `Y` intersect. Elements in `Y` with&lt;br&gt;non-intersecting keys are appended, retaining their partial order.&lt;br&gt;Required.||
 |**message**|str|Message represents the message displayed when validation fails. The message is required if the Expression contains line breaks. The message must not contain line breaks. If unset, the message is &#34;failed rule: {Rule}&#34;. e.g. &#34;must be a URL with the host matching spec.host&#34; If the Expression contains line breaks. Message is required. The message must not contain line breaks. If unset, the message is &#34;failed Expression: {Expression}&#34;.||
 |**messageExpression**|str|messageExpression declares a CEL expression that evaluates to the validation failure message that is returned when this rule fails. Since messageExpression is used as a failure message, it must evaluate to a string. If both message and messageExpression are present on a validation, then messageExpression will be used if validation fails. If messageExpression results in a runtime error, the runtime error is logged, and the validation failure message is produced as if the messageExpression field were unset. If messageExpression evaluates to an empty string, a string with only spaces, or a string that contains line breaks, then the validation failure message will also be produced as if the messageExpression field were unset, and the fact that messageExpression produced an empty string/string with only spaces/string with line breaks will be logged. messageExpression has access to all the same variables as the `expression` except for &#39;authorizer&#39; and &#39;authorizer.requestResource&#39;. Example: &#34;object.x must be less than max (&#34;+string(params.max)+&#34;)&#34;||
 |**reason**|str|Reason represents a machine-readable description of why this validation failed. If this is the first validation in the list to fail, this reason, as well as the corresponding HTTP response code, are used in the HTTP response to the client. The currently supported reasons are: &#34;Unauthorized&#34;, &#34;Forbidden&#34;, &#34;Invalid&#34;, &#34;RequestEntityTooLarge&#34;. If not set, StatusReasonInvalid is used in the response to the client.||
@@ -943,10 +699,7 @@ StatefulSetOrdinals describes the policy used for replica ordinal assignment in 
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**start**|int|start is the number representing the first replica&#39;s index. It may be used to number replicas from an alternate index (eg: 1-indexed) over the default 0-indexed names, or to orchestrate progressive movement of replicas from one StatefulSet to another. If set, replica indices will be in the range:
-[.spec.ordinals.start, .spec.ordinals.start + .spec.replicas).
-If unset, defaults to 0. Replica indices will be in the range:
-[0, .spec.replicas).||
+|**start**|int|start is the number representing the first replica&#39;s index. It may be used to number replicas from an alternate index (eg: 1-indexed) over the default 0-indexed names, or to orchestrate progressive movement of replicas from one StatefulSet to another. If set, replica indices will be in the range:&lt;br&gt;[.spec.ordinals.start, .spec.ordinals.start + .spec.replicas).&lt;br&gt;If unset, defaults to 0. Replica indices will be in the range:&lt;br&gt;[0, .spec.replicas).||
 ### StatefulSetPersistentVolumeClaimRetentionPolicy
 
 StatefulSetPersistentVolumeClaimRetentionPolicy describes the policy used for PVCs created from the StatefulSet VolumeClaimTemplates.
@@ -1192,8 +945,7 @@ ResourceRule is the list of actions the subject is allowed to perform on resourc
 | --- | --- | --- | --- |
 |**apiGroups**|[str]|APIGroups is the name of the APIGroup that contains the resources.  If multiple API groups are specified, any action requested against one of the enumerated resources in any API group will be allowed.  &#34;*&#34; means all.||
 |**resourceNames**|[str]|ResourceNames is an optional white list of names that the rule applies to.  An empty set means that everything is allowed.  &#34;*&#34; means all.||
-|**resources**|[str]|Resources is a list of resources this rule applies to.  &#34;*&#34; means all in the specified apiGroups.
-&#34;*/foo&#34; represents the subresource &#39;foo&#39; for all resources in the specified apiGroups.||
+|**resources**|[str]|Resources is a list of resources this rule applies to.  &#34;*&#34; means all in the specified apiGroups.&lt;br&gt;&#34;*/foo&#34; represents the subresource &#39;foo&#39; for all resources in the specified apiGroups.||
 |**verbs** `required`|[str]|Verb is a list of kubernetes resource API verbs, like: get, list, watch, create, update, delete, proxy.  &#34;*&#34; means all.||
 ### SelfSubjectAccessReview
 
@@ -1475,10 +1227,7 @@ HorizontalPodAutoscalerBehavior configures the scaling behavior of the target in
 | name | type | description | default value |
 | --- | --- | --- | --- |
 |**scaleDown**|[HPAScalingRules](#hpascalingrules)|scaleDown is scaling policy for scaling Down. If not set, the default value is to allow to scale down to minReplicas pods, with a 300 second stabilization window (i.e., the highest recommendation for the last 300sec is used).||
-|**scaleUp**|[HPAScalingRules](#hpascalingrules)|scaleUp is scaling policy for scaling Up. If not set, the default value is the higher of:
-* increase no more than 4 pods per 60 seconds
-* double the number of pods per 60 seconds
-No stabilization is used.||
+|**scaleUp**|[HPAScalingRules](#hpascalingrules)|scaleUp is scaling policy for scaling Up. If not set, the default value is the higher of:&lt;br&gt;* increase no more than 4 pods per 60 seconds&lt;br&gt;* double the number of pods per 60 seconds&lt;br&gt;No stabilization is used.||
 ### HorizontalPodAutoscalerCondition
 
 HorizontalPodAutoscalerCondition describes the state of a HorizontalPodAutoscaler at a certain point.
@@ -1686,9 +1435,7 @@ CronJobSpec describes how the job execution will look like and when it will actu
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**concurrencyPolicy**|str|Specifies how to treat concurrent executions of a Job. Valid values are:
-
-- &#34;Allow&#34; (default): allows CronJobs to run concurrently; - &#34;Forbid&#34;: forbids concurrent runs, skipping next run if previous run hasn&#39;t finished yet; - &#34;Replace&#34;: cancels currently running job and replaces it with a new one||
+|**concurrencyPolicy**|str|Specifies how to treat concurrent executions of a Job. Valid values are:&lt;br&gt;&lt;br&gt;- &#34;Allow&#34; (default): allows CronJobs to run concurrently; - &#34;Forbid&#34;: forbids concurrent runs, skipping next run if previous run hasn&#39;t finished yet; - &#34;Replace&#34;: cancels currently running job and replaces it with a new one||
 |**failedJobsHistoryLimit**|int|The number of failed finished jobs to retain. Value must be non-negative integer. Defaults to 1.||
 |**jobTemplate** `required`|[JobTemplateSpec](#jobtemplatespec)|Specifies the job that will be created when executing a CronJob.||
 |**schedule** `required`|str|The schedule in Cron format, see https://en.wikipedia.org/wiki/Cron.||
@@ -1755,19 +1502,11 @@ JobSpec describes how the job execution will look like.
 | --- | --- | --- | --- |
 |**activeDeadlineSeconds**|int|Specifies the duration in seconds relative to the startTime that the job may be continuously active before the system tries to terminate it; value must be positive integer. If a Job is suspended (at creation or through an update), this timer will effectively be stopped and reset when the Job is resumed again.||
 |**backoffLimit**|int|Specifies the number of retries before marking this job failed. Defaults to 6||
-|**completionMode**|str|completionMode specifies how Pod completions are tracked. It can be `NonIndexed` (default) or `Indexed`.
-
-`NonIndexed` means that the Job is considered complete when there have been .spec.completions successfully completed Pods. Each Pod completion is homologous to each other.
-
-`Indexed` means that the Pods of a Job get an associated completion index from 0 to (.spec.completions - 1), available in the annotation batch.kubernetes.io/job-completion-index. The Job is considered complete when there is one successfully completed Pod for each index. When value is `Indexed`, .spec.completions must be specified and `.spec.parallelism` must be less than or equal to 10^5. In addition, The Pod name takes the form `$(job-name)-$(index)-$(random-string)`, the Pod hostname takes the form `$(job-name)-$(index)`.
-
-More completion modes can be added in the future. If the Job controller observes a mode that it doesn&#39;t recognize, which is possible during upgrades due to version skew, the controller skips updates for the Job.||
+|**completionMode**|str|completionMode specifies how Pod completions are tracked. It can be `NonIndexed` (default) or `Indexed`.&lt;br&gt;&lt;br&gt;`NonIndexed` means that the Job is considered complete when there have been .spec.completions successfully completed Pods. Each Pod completion is homologous to each other.&lt;br&gt;&lt;br&gt;`Indexed` means that the Pods of a Job get an associated completion index from 0 to (.spec.completions - 1), available in the annotation batch.kubernetes.io/job-completion-index. The Job is considered complete when there is one successfully completed Pod for each index. When value is `Indexed`, .spec.completions must be specified and `.spec.parallelism` must be less than or equal to 10^5. In addition, The Pod name takes the form `$(job-name)-$(index)-$(random-string)`, the Pod hostname takes the form `$(job-name)-$(index)`.&lt;br&gt;&lt;br&gt;More completion modes can be added in the future. If the Job controller observes a mode that it doesn&#39;t recognize, which is possible during upgrades due to version skew, the controller skips updates for the Job.||
 |**completions**|int|Specifies the desired number of successfully finished pods the job should be run with.  Setting to null means that the success of any pod signals the success of all pods, and allows parallelism to have any positive value.  Setting to 1 means that parallelism is limited to 1 and the success of that pod signals the success of the job. More info: https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/||
 |**manualSelector**|bool|manualSelector controls generation of pod labels and pod selectors. Leave `manualSelector` unset unless you are certain what you are doing. When false or unset, the system pick labels unique to this job and appends those labels to the pod template.  When true, the user is responsible for picking unique labels and specifying the selector.  Failure to pick a unique label may cause this and other jobs to not function correctly.  However, You may see `manualSelector=true` in jobs that were created with the old `extensions/v1beta1` API. More info: https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/#specifying-your-own-pod-selector||
 |**parallelism**|int|Specifies the maximum desired number of pods the job should run at any given time. The actual number of pods running in steady state will be less than this number when ((.spec.completions - .status.successful) &lt; .spec.parallelism), i.e. when the work left to do is less than max parallelism. More info: https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/||
-|**podFailurePolicy**|[PodFailurePolicy](#podfailurepolicy)|Specifies the policy of handling failed pods. In particular, it allows to specify the set of actions and conditions which need to be satisfied to take the associated action. If empty, the default behaviour applies - the counter of failed pods, represented by the jobs&#39;s .status.failed field, is incremented and it is checked against the backoffLimit. This field cannot be used in combination with restartPolicy=OnFailure.
-
-This field is beta-level. It can be used when the `JobPodFailurePolicy` feature gate is enabled (enabled by default).||
+|**podFailurePolicy**|[PodFailurePolicy](#podfailurepolicy)|Specifies the policy of handling failed pods. In particular, it allows to specify the set of actions and conditions which need to be satisfied to take the associated action. If empty, the default behaviour applies - the counter of failed pods, represented by the jobs&#39;s .status.failed field, is incremented and it is checked against the backoffLimit. This field cannot be used in combination with restartPolicy=OnFailure.&lt;br&gt;&lt;br&gt;This field is beta-level. It can be used when the `JobPodFailurePolicy` feature gate is enabled (enabled by default).||
 |**selector**|[LabelSelector](#labelselector)|A label query over pods that should match the pod count. Normally, the system sets this field for you. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/#label-selectors||
 |**suspend**|bool|suspend specifies whether the Job controller should create Pods or not. If a Job is created with suspend set to true, no Pods are created by the Job controller. If a Job is suspended after creation (i.e. the flag goes from false to true), the Job controller will delete all active Pods associated with this Job. Users must design their workload to gracefully handle this. Suspending a Job will reset the StartTime field of the Job, effectively resetting the ActiveDeadlineSeconds timer too. Defaults to false.||
 |**template** `required`|[PodTemplateSpec](#podtemplatespec)|Describes the pod that will be created when executing a job. The only allowed template.spec.restartPolicy values are &#34;Never&#34; or &#34;OnFailure&#34;. More info: https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/||
@@ -1785,19 +1524,10 @@ JobStatus represents the current state of a Job.
 |**completionTime**|str|Represents time when the job was completed. It is not guaranteed to be set in happens-before order across separate operations. It is represented in RFC3339 form and is in UTC. The completion time is only set when the job finishes successfully.||
 |**conditions**|[[JobCondition](#jobcondition)]|The latest available observations of an object&#39;s current state. When a Job fails, one of the conditions will have type &#34;Failed&#34; and status true. When a Job is suspended, one of the conditions will have type &#34;Suspended&#34; and status true; when the Job is resumed, the status of this condition will become false. When a Job is completed, one of the conditions will have type &#34;Complete&#34; and status true. More info: https://kubernetes.io/docs/concepts/workloads/controllers/jobs-run-to-completion/||
 |**failed**|int|The number of pods which reached phase Failed.||
-|**ready**|int|The number of pods which have a Ready condition.
-
-This field is beta-level. The job controller populates the field when the feature gate JobReadyPods is enabled (enabled by default).||
+|**ready**|int|The number of pods which have a Ready condition.&lt;br&gt;&lt;br&gt;This field is beta-level. The job controller populates the field when the feature gate JobReadyPods is enabled (enabled by default).||
 |**startTime**|str|Represents time when the job controller started processing a job. When a Job is created in the suspended state, this field is not set until the first time it is resumed. This field is reset every time a Job is resumed from suspension. It is represented in RFC3339 form and is in UTC.||
 |**succeeded**|int|The number of pods which reached phase Succeeded.||
-|**uncountedTerminatedPods**|[UncountedTerminatedPods](#uncountedterminatedpods)|uncountedTerminatedPods holds the UIDs of Pods that have terminated but the job controller hasn&#39;t yet accounted for in the status counters.
-
-The job controller creates pods with a finalizer. When a pod terminates (succeeded or failed), the controller does three steps to account for it in the job status:
-
-1. Add the pod UID to the arrays in this field. 2. Remove the pod finalizer. 3. Remove the pod UID from the arrays while increasing the corresponding
-counter.
-
-Old jobs might not be tracked using this field, in which case the field remains null.||
+|**uncountedTerminatedPods**|[UncountedTerminatedPods](#uncountedterminatedpods)|uncountedTerminatedPods holds the UIDs of Pods that have terminated but the job controller hasn&#39;t yet accounted for in the status counters.&lt;br&gt;&lt;br&gt;The job controller creates pods with a finalizer. When a pod terminates (succeeded or failed), the controller does three steps to account for it in the job status:&lt;br&gt;&lt;br&gt;1. Add the pod UID to the arrays in this field. 2. Remove the pod finalizer. 3. Remove the pod UID from the arrays while increasing the corresponding&lt;br&gt;counter.&lt;br&gt;&lt;br&gt;Old jobs might not be tracked using this field, in which case the field remains null.||
 ### JobTemplateSpec
 
 JobTemplateSpec describes the data a Job should have when created from a template
@@ -1826,15 +1556,7 @@ PodFailurePolicyOnExitCodesRequirement describes the requirement for handling a 
 | name | type | description | default value |
 | --- | --- | --- | --- |
 |**containerName**|str|Restricts the check for exit codes to the container with the specified name. When null, the rule applies to all containers. When specified, it should match one the container or initContainer names in the pod template.||
-|**operator** `required`|str|Represents the relationship between the container exit code(s) and the specified values. Containers completed with success (exit code 0) are excluded from the requirement check. Possible values are:
-
-- In: the requirement is satisfied if at least one container exit code
-(might be multiple if there are multiple containers not restricted
-by the &#39;containerName&#39; field) is in the set of specified values.
-- NotIn: the requirement is satisfied if at least one container exit code
-(might be multiple if there are multiple containers not restricted
-by the &#39;containerName&#39; field) is not in the set of specified values.
-Additional values are considered to be added in the future. Clients should react to an unknown operator by assuming the requirement is not satisfied.||
+|**operator** `required`|str|Represents the relationship between the container exit code(s) and the specified values. Containers completed with success (exit code 0) are excluded from the requirement check. Possible values are:&lt;br&gt;&lt;br&gt;- In: the requirement is satisfied if at least one container exit code&lt;br&gt;(might be multiple if there are multiple containers not restricted&lt;br&gt;by the &#39;containerName&#39; field) is in the set of specified values.&lt;br&gt;- NotIn: the requirement is satisfied if at least one container exit code&lt;br&gt;(might be multiple if there are multiple containers not restricted&lt;br&gt;by the &#39;containerName&#39; field) is not in the set of specified values.&lt;br&gt;Additional values are considered to be added in the future. Clients should react to an unknown operator by assuming the requirement is not satisfied.||
 |**values** `required`|[int]|Specifies the set of values. Each returned container exit code (might be multiple in case of multiple containers) is checked against this set of values with respect to the operator. The list of values must be ordered and must not contain duplicates. Value &#39;0&#39; cannot be used for the In operator. At least one element is required. At most 255 elements are allowed.||
 ### PodFailurePolicyOnPodConditionsPattern
 
@@ -1854,15 +1576,7 @@ PodFailurePolicyRule describes how a pod failure is handled when the requirement
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**action** `required`|str|Specifies the action taken on a pod failure when the requirements are satisfied. Possible values are:
-
-- FailJob: indicates that the pod&#39;s job is marked as Failed and all
-running pods are terminated.
-- Ignore: indicates that the counter towards the .backoffLimit is not
-incremented and a replacement pod is created.
-- Count: indicates that the pod is handled in the default way - the
-counter towards the .backoffLimit is incremented.
-Additional values are considered to be added in the future. Clients should react to an unknown action by skipping the rule.||
+|**action** `required`|str|Specifies the action taken on a pod failure when the requirements are satisfied. Possible values are:&lt;br&gt;&lt;br&gt;- FailJob: indicates that the pod&#39;s job is marked as Failed and all&lt;br&gt;running pods are terminated.&lt;br&gt;- Ignore: indicates that the counter towards the .backoffLimit is not&lt;br&gt;incremented and a replacement pod is created.&lt;br&gt;- Count: indicates that the pod is handled in the default way - the&lt;br&gt;counter towards the .backoffLimit is incremented.&lt;br&gt;Additional values are considered to be added in the future. Clients should react to an unknown action by skipping the rule.||
 |**onExitCodes**|[PodFailurePolicyOnExitCodesRequirement](#podfailurepolicyonexitcodesrequirement)|Represents the requirement on the container exit codes.||
 |**onPodConditions** `required`|[[PodFailurePolicyOnPodConditionsPattern](#podfailurepolicyonpodconditionspattern)]|Represents the requirement on the pod conditions. The requirement is represented as a list of pod condition patterns. The requirement is satisfied if at least one pattern matches an actual pod condition. At most 20 elements are allowed.||
 ### UncountedTerminatedPods
@@ -1921,57 +1635,13 @@ CertificateSigningRequestSpec contains the certificate request.
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**expirationSeconds**|int|expirationSeconds is the requested duration of validity of the issued certificate. The certificate signer may issue a certificate with a different validity duration so a client must check the delta between the notBefore and and notAfter fields in the issued certificate to determine the actual duration.
-
-The v1.22+ in-tree implementations of the well-known Kubernetes signers will honor this field as long as the requested duration is not greater than the maximum duration they will honor per the --cluster-signing-duration CLI flag to the Kubernetes controller manager.
-
-Certificate signers may not honor this field for various reasons:
-
-1. Old signer that is unaware of the field (such as the in-tree
-implementations prior to v1.22)
-2. Signer whose configured maximum is shorter than the requested duration
-3. Signer whose configured minimum is longer than the requested duration
-
-The minimum valid value for expirationSeconds is 600, i.e. 10 minutes.||
+|**expirationSeconds**|int|expirationSeconds is the requested duration of validity of the issued certificate. The certificate signer may issue a certificate with a different validity duration so a client must check the delta between the notBefore and and notAfter fields in the issued certificate to determine the actual duration.&lt;br&gt;&lt;br&gt;The v1.22+ in-tree implementations of the well-known Kubernetes signers will honor this field as long as the requested duration is not greater than the maximum duration they will honor per the --cluster-signing-duration CLI flag to the Kubernetes controller manager.&lt;br&gt;&lt;br&gt;Certificate signers may not honor this field for various reasons:&lt;br&gt;&lt;br&gt;1. Old signer that is unaware of the field (such as the in-tree&lt;br&gt;implementations prior to v1.22)&lt;br&gt;2. Signer whose configured maximum is shorter than the requested duration&lt;br&gt;3. Signer whose configured minimum is longer than the requested duration&lt;br&gt;&lt;br&gt;The minimum valid value for expirationSeconds is 600, i.e. 10 minutes.||
 |**extra**|{str:[str]}|extra contains extra attributes of the user that created the CertificateSigningRequest. Populated by the API server on creation and immutable.||
 |**groups**|[str]|groups contains group membership of the user that created the CertificateSigningRequest. Populated by the API server on creation and immutable.||
 |**request** `required`|str|request contains an x509 certificate signing request encoded in a &#34;CERTIFICATE REQUEST&#34; PEM block. When serialized as JSON or YAML, the data is additionally base64-encoded.||
-|**signerName** `required`|str|signerName indicates the requested signer, and is a qualified name.
-
-List/watch requests for CertificateSigningRequests can filter on this field using a &#34;spec.signerName=NAME&#34; fieldSelector.
-
-Well-known Kubernetes signers are:
-1. &#34;kubernetes.io/kube-apiserver-client&#34;: issues client certificates that can be used to authenticate to kube-apiserver.
-Requests for this signer are never auto-approved by kube-controller-manager, can be issued by the &#34;csrsigning&#34; controller in kube-controller-manager.
-2. &#34;kubernetes.io/kube-apiserver-client-kubelet&#34;: issues client certificates that kubelets use to authenticate to kube-apiserver.
-Requests for this signer can be auto-approved by the &#34;csrapproving&#34; controller in kube-controller-manager, and can be issued by the &#34;csrsigning&#34; controller in kube-controller-manager.
-3. &#34;kubernetes.io/kubelet-serving&#34; issues serving certificates that kubelets use to serve TLS endpoints, which kube-apiserver can connect to securely.
-Requests for this signer are never auto-approved by kube-controller-manager, and can be issued by the &#34;csrsigning&#34; controller in kube-controller-manager.
-
-More details are available at https://k8s.io/docs/reference/access-authn-authz/certificate-signing-requests/#kubernetes-signers
-
-Custom signerNames can also be specified. The signer defines:
-1. Trust distribution: how trust (CA bundles) are distributed.
-2. Permitted subjects: and behavior when a disallowed subject is requested.
-3. Required, permitted, or forbidden x509 extensions in the request (including whether subjectAltNames are allowed, which types, restrictions on allowed values) and behavior when a disallowed extension is requested.
-4. Required, permitted, or forbidden key usages / extended key usages.
-5. Expiration/certificate lifetime: whether it is fixed by the signer, configurable by the admin.
-6. Whether or not requests for CA certificates are allowed.||
+|**signerName** `required`|str|signerName indicates the requested signer, and is a qualified name.&lt;br&gt;&lt;br&gt;List/watch requests for CertificateSigningRequests can filter on this field using a &#34;spec.signerName=NAME&#34; fieldSelector.&lt;br&gt;&lt;br&gt;Well-known Kubernetes signers are:&lt;br&gt;1. &#34;kubernetes.io/kube-apiserver-client&#34;: issues client certificates that can be used to authenticate to kube-apiserver.&lt;br&gt;Requests for this signer are never auto-approved by kube-controller-manager, can be issued by the &#34;csrsigning&#34; controller in kube-controller-manager.&lt;br&gt;2. &#34;kubernetes.io/kube-apiserver-client-kubelet&#34;: issues client certificates that kubelets use to authenticate to kube-apiserver.&lt;br&gt;Requests for this signer can be auto-approved by the &#34;csrapproving&#34; controller in kube-controller-manager, and can be issued by the &#34;csrsigning&#34; controller in kube-controller-manager.&lt;br&gt;3. &#34;kubernetes.io/kubelet-serving&#34; issues serving certificates that kubelets use to serve TLS endpoints, which kube-apiserver can connect to securely.&lt;br&gt;Requests for this signer are never auto-approved by kube-controller-manager, and can be issued by the &#34;csrsigning&#34; controller in kube-controller-manager.&lt;br&gt;&lt;br&gt;More details are available at https://k8s.io/docs/reference/access-authn-authz/certificate-signing-requests/#kubernetes-signers&lt;br&gt;&lt;br&gt;Custom signerNames can also be specified. The signer defines:&lt;br&gt;1. Trust distribution: how trust (CA bundles) are distributed.&lt;br&gt;2. Permitted subjects: and behavior when a disallowed subject is requested.&lt;br&gt;3. Required, permitted, or forbidden x509 extensions in the request (including whether subjectAltNames are allowed, which types, restrictions on allowed values) and behavior when a disallowed extension is requested.&lt;br&gt;4. Required, permitted, or forbidden key usages / extended key usages.&lt;br&gt;5. Expiration/certificate lifetime: whether it is fixed by the signer, configurable by the admin.&lt;br&gt;6. Whether or not requests for CA certificates are allowed.||
 |**uid**|str|uid contains the uid of the user that created the CertificateSigningRequest. Populated by the API server on creation and immutable.||
-|**usages**|[str]|usages specifies a set of key usages requested in the issued certificate.
-
-Requests for TLS client certificates typically request: &#34;digital signature&#34;, &#34;key encipherment&#34;, &#34;client auth&#34;.
-
-Requests for TLS serving certificates typically request: &#34;key encipherment&#34;, &#34;digital signature&#34;, &#34;server auth&#34;.
-
-Valid values are:
-&#34;signing&#34;, &#34;digital signature&#34;, &#34;content commitment&#34;,
-&#34;key encipherment&#34;, &#34;key agreement&#34;, &#34;data encipherment&#34;,
-&#34;cert sign&#34;, &#34;crl sign&#34;, &#34;encipher only&#34;, &#34;decipher only&#34;, &#34;any&#34;,
-&#34;server auth&#34;, &#34;client auth&#34;,
-&#34;code signing&#34;, &#34;email protection&#34;, &#34;s/mime&#34;,
-&#34;ipsec end system&#34;, &#34;ipsec tunnel&#34;, &#34;ipsec user&#34;,
-&#34;timestamping&#34;, &#34;ocsp signing&#34;, &#34;microsoft sgc&#34;, &#34;netscape sgc&#34;||
+|**usages**|[str]|usages specifies a set of key usages requested in the issued certificate.&lt;br&gt;&lt;br&gt;Requests for TLS client certificates typically request: &#34;digital signature&#34;, &#34;key encipherment&#34;, &#34;client auth&#34;.&lt;br&gt;&lt;br&gt;Requests for TLS serving certificates typically request: &#34;key encipherment&#34;, &#34;digital signature&#34;, &#34;server auth&#34;.&lt;br&gt;&lt;br&gt;Valid values are:&lt;br&gt;&#34;signing&#34;, &#34;digital signature&#34;, &#34;content commitment&#34;,&lt;br&gt;&#34;key encipherment&#34;, &#34;key agreement&#34;, &#34;data encipherment&#34;,&lt;br&gt;&#34;cert sign&#34;, &#34;crl sign&#34;, &#34;encipher only&#34;, &#34;decipher only&#34;, &#34;any&#34;,&lt;br&gt;&#34;server auth&#34;, &#34;client auth&#34;,&lt;br&gt;&#34;code signing&#34;, &#34;email protection&#34;, &#34;s/mime&#34;,&lt;br&gt;&#34;ipsec end system&#34;, &#34;ipsec tunnel&#34;, &#34;ipsec user&#34;,&lt;br&gt;&#34;timestamping&#34;, &#34;ocsp signing&#34;, &#34;microsoft sgc&#34;, &#34;netscape sgc&#34;||
 |**username**|str|username contains the name of the user that created the CertificateSigningRequest. Populated by the API server on creation and immutable.||
 ### CertificateSigningRequestStatus
 
@@ -1981,28 +1651,7 @@ CertificateSigningRequestStatus contains conditions used to indicate approved/de
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**certificate**|str|certificate is populated with an issued certificate by the signer after an Approved condition is present. This field is set via the /status subresource. Once populated, this field is immutable.
-
-If the certificate signing request is denied, a condition of type &#34;Denied&#34; is added and this field remains empty. If the signer cannot issue the certificate, a condition of type &#34;Failed&#34; is added and this field remains empty.
-
-Validation requirements:
-1. certificate must contain one or more PEM blocks.
-2. All PEM blocks must have the &#34;CERTIFICATE&#34; label, contain no headers, and the encoded data
-must be a BER-encoded ASN.1 Certificate structure as described in section 4 of RFC5280.
-3. Non-PEM content may appear before or after the &#34;CERTIFICATE&#34; PEM blocks and is unvalidated,
-to allow for explanatory text as described in section 5.2 of RFC7468.
-
-If more than one PEM block is present, and the definition of the requested spec.signerName does not indicate otherwise, the first block is the issued certificate, and subsequent blocks should be treated as intermediate certificates and presented in TLS handshakes.
-
-The certificate is encoded in PEM format.
-
-When serialized as JSON or YAML, the data is additionally base64-encoded, so it consists of:
-
-base64(
------BEGIN CERTIFICATE-----
-...
------END CERTIFICATE-----
-)||
+|**certificate**|str|certificate is populated with an issued certificate by the signer after an Approved condition is present. This field is set via the /status subresource. Once populated, this field is immutable.&lt;br&gt;&lt;br&gt;If the certificate signing request is denied, a condition of type &#34;Denied&#34; is added and this field remains empty. If the signer cannot issue the certificate, a condition of type &#34;Failed&#34; is added and this field remains empty.&lt;br&gt;&lt;br&gt;Validation requirements:&lt;br&gt;1. certificate must contain one or more PEM blocks.&lt;br&gt;2. All PEM blocks must have the &#34;CERTIFICATE&#34; label, contain no headers, and the encoded data&lt;br&gt;must be a BER-encoded ASN.1 Certificate structure as described in section 4 of RFC5280.&lt;br&gt;3. Non-PEM content may appear before or after the &#34;CERTIFICATE&#34; PEM blocks and is unvalidated,&lt;br&gt;to allow for explanatory text as described in section 5.2 of RFC7468.&lt;br&gt;&lt;br&gt;If more than one PEM block is present, and the definition of the requested spec.signerName does not indicate otherwise, the first block is the issued certificate, and subsequent blocks should be treated as intermediate certificates and presented in TLS handshakes.&lt;br&gt;&lt;br&gt;The certificate is encoded in PEM format.&lt;br&gt;&lt;br&gt;When serialized as JSON or YAML, the data is additionally base64-encoded, so it consists of:&lt;br&gt;&lt;br&gt;base64(&lt;br&gt;-----BEGIN CERTIFICATE-----&lt;br&gt;...&lt;br&gt;-----END CERTIFICATE-----&lt;br&gt;)||
 |**conditions**|[[CertificateSigningRequestCondition](#certificatesigningrequestcondition)]|conditions applied to the request. Known conditions are &#34;Approved&#34;, &#34;Denied&#34;, and &#34;Failed&#34;.||
 ### ClusterTrustBundle
 
@@ -2036,20 +1685,8 @@ ClusterTrustBundleSpec contains the signer and trust anchors.
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**signerName**|str|signerName indicates the associated signer, if any.
-
-In order to create or update a ClusterTrustBundle that sets signerName, you must have the following cluster-scoped permission: group=certificates.k8s.io resource=signers resourceName=&lt;the signer name&gt; verb=attest.
-
-If signerName is not empty, then the ClusterTrustBundle object must be named with the signer name as a prefix (translating slashes to colons). For example, for the signer name `example.com/foo`, valid ClusterTrustBundle object names include `example.com:foo:abc` and `example.com:foo:v1`.
-
-If signerName is empty, then the ClusterTrustBundle object&#39;s name must not have such a prefix.
-
-List/watch requests for ClusterTrustBundles can filter on this field using a `spec.signerName=NAME` field selector.||
-|**trustBundle** `required`|str|trustBundle contains the individual X.509 trust anchors for this bundle, as PEM bundle of PEM-wrapped, DER-formatted X.509 certificates.
-
-The data must consist only of PEM certificate blocks that parse as valid X.509 certificates.  Each certificate must include a basic constraints extension with the CA bit set.  The API server will reject objects that contain duplicate certificates, or that use PEM block headers.
-
-Users of ClusterTrustBundles, including Kubelet, are free to reorder and deduplicate certificate blocks in this file according to their own logic, as well as to drop PEM block headers and inter-block data.||
+|**signerName**|str|signerName indicates the associated signer, if any.&lt;br&gt;&lt;br&gt;In order to create or update a ClusterTrustBundle that sets signerName, you must have the following cluster-scoped permission: group=certificates.k8s.io resource=signers resourceName=&lt;the signer name&gt; verb=attest.&lt;br&gt;&lt;br&gt;If signerName is not empty, then the ClusterTrustBundle object must be named with the signer name as a prefix (translating slashes to colons). For example, for the signer name `example.com/foo`, valid ClusterTrustBundle object names include `example.com:foo:abc` and `example.com:foo:v1`.&lt;br&gt;&lt;br&gt;If signerName is empty, then the ClusterTrustBundle object&#39;s name must not have such a prefix.&lt;br&gt;&lt;br&gt;List/watch requests for ClusterTrustBundles can filter on this field using a `spec.signerName=NAME` field selector.||
+|**trustBundle** `required`|str|trustBundle contains the individual X.509 trust anchors for this bundle, as PEM bundle of PEM-wrapped, DER-formatted X.509 certificates.&lt;br&gt;&lt;br&gt;The data must consist only of PEM certificate blocks that parse as valid X.509 certificates.  Each certificate must include a basic constraints extension with the CA bit set.  The API server will reject objects that contain duplicate certificates, or that use PEM block headers.&lt;br&gt;&lt;br&gt;Users of ClusterTrustBundles, including Kubelet, are free to reorder and deduplicate certificate blocks in this file according to their own logic, as well as to drop PEM block headers and inter-block data.||
 ### Lease
 
 Lease defines a lease concept.
@@ -2271,13 +1908,7 @@ ClaimSource describes a reference to a ResourceClaim.  Exactly one of these fiel
 | name | type | description | default value |
 | --- | --- | --- | --- |
 |**resourceClaimName**|str|ResourceClaimName is the name of a ResourceClaim object in the same namespace as this pod.||
-|**resourceClaimTemplateName**|str|ResourceClaimTemplateName is the name of a ResourceClaimTemplate object in the same namespace as this pod.
-
-The template will be used to create a new ResourceClaim, which will be bound to this pod. When this pod is deleted, the ResourceClaim will also be deleted. The name of the ResourceClaim will be &lt;pod name&gt;-&lt;resource name&gt;, where &lt;resource name&gt; is the PodResourceClaim.Name. Pod validation will reject the pod if the concatenated name is not valid for a ResourceClaim (e.g. too long).
-
-An existing ResourceClaim with that name that is not owned by the pod will not be used for the pod to avoid using an unrelated resource by mistake. Scheduling and pod startup are then blocked until the unrelated ResourceClaim is removed.
-
-This field is immutable and no changes will be made to the corresponding ResourceClaim by the control plane after creating the ResourceClaim.||
+|**resourceClaimTemplateName**|str|ResourceClaimTemplateName is the name of a ResourceClaimTemplate object in the same namespace as this pod.&lt;br&gt;&lt;br&gt;The template will be used to create a new ResourceClaim, which will be bound to this pod. When this pod is deleted, the ResourceClaim will also be deleted. The name of the ResourceClaim will be &lt;pod name&gt;-&lt;resource name&gt;, where &lt;resource name&gt; is the PodResourceClaim.Name. Pod validation will reject the pod if the concatenated name is not valid for a ResourceClaim (e.g. too long).&lt;br&gt;&lt;br&gt;An existing ResourceClaim with that name that is not owned by the pod will not be used for the pod to avoid using an unrelated resource by mistake. Scheduling and pod startup are then blocked until the unrelated ResourceClaim is removed.&lt;br&gt;&lt;br&gt;This field is immutable and no changes will be made to the corresponding ResourceClaim by the control plane after creating the ResourceClaim.||
 ### ClientIPConfig
 
 ClientIPConfig represents the configurations of Client IP based session affinity.
@@ -2529,9 +2160,7 @@ ContainerStatus contains details for the current status of this container.
 |**imageID** `required`|str|ImageID is the image ID of the container&#39;s image. The image ID may not match the image ID of the image used in the PodSpec, as it may have been resolved by the runtime.||
 |**lastState**|[ContainerState](#containerstate)|LastTerminationState holds the last termination state of the container to help debug container crashes and restarts. This field is not populated if the container is still running and RestartCount is 0.||
 |**name** `required`|str|Name is a DNS_LABEL representing the unique name of the container. Each container in a pod must have a unique name across all container types. Cannot be updated.||
-|**ready** `required`|bool|Ready specifies whether the container is currently passing its readiness check. The value will change as readiness probes keep executing. If no readiness probes are specified, this field defaults to true once the container is fully started (see Started field).
-
-The value is typically used to determine whether a container is ready to accept traffic.||
+|**ready** `required`|bool|Ready specifies whether the container is currently passing its readiness check. The value will change as readiness probes keep executing. If no readiness probes are specified, this field defaults to true once the container is fully started (see Started field).&lt;br&gt;&lt;br&gt;The value is typically used to determine whether a container is ready to accept traffic.||
 |**resources**|[ResourceRequirements](#resourcerequirements)|Resources represents the compute resource requests and limits that have been successfully enacted on the running container after it has been started or has been successfully resized.||
 |**restartCount** `required`|int|RestartCount holds the number of times the container has been restarted. Kubelet makes an effort to always increment the value, but there are cases when the state may be lost due to node restarts and then the value may be reset to 0. The value is never negative.||
 |**started**|bool|Started indicates whether the container has finished its postStart lifecycle hook and passed its startup probe. Initialized as false, becomes true after startupProbe is considered successful. Resets to false when the container is restarted, or if kubelet loses state temporarily. In both cases, startup probes will run again. Is always true when no startupProbe is defined and container is running and has passed the postStart lifecycle hook. The null value must be treated the same as false.||
@@ -2606,14 +2235,7 @@ EndpointPort is a tuple that describes a single port.
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**appProtocol**|str|The application protocol for this port. This is used as a hint for implementations to offer richer behavior for protocols that they understand. This field follows standard Kubernetes label syntax. Valid values are either:
-
-* Un-prefixed protocol names - reserved for IANA standard service names (as per RFC-6335 and https://www.iana.org/assignments/service-names).
-
-* Kubernetes-defined prefixed names:
-* &#39;kubernetes.io/h2c&#39; - HTTP/2 over cleartext as described in https://www.rfc-editor.org/rfc/rfc7540
-
-* Other protocols should use implementation-defined prefixed names such as mycompany.com/my-custom-protocol.||
+|**appProtocol**|str|The application protocol for this port. This is used as a hint for implementations to offer richer behavior for protocols that they understand. This field follows standard Kubernetes label syntax. Valid values are either:&lt;br&gt;&lt;br&gt;* Un-prefixed protocol names - reserved for IANA standard service names (as per RFC-6335 and https://www.iana.org/assignments/service-names).&lt;br&gt;&lt;br&gt;* Kubernetes-defined prefixed names:&lt;br&gt;* &#39;kubernetes.io/h2c&#39; - HTTP/2 over cleartext as described in https://www.rfc-editor.org/rfc/rfc7540&lt;br&gt;&lt;br&gt;* Other protocols should use implementation-defined prefixed names such as mycompany.com/my-custom-protocol.||
 |**name**|str|The name of this port.  This must match the &#39;name&#39; field in the corresponding ServicePort. Must be a DNS_LABEL. Optional only if one port is defined.||
 |**port** `required`|int|The port number of the endpoint.||
 |**protocol**|str|||
@@ -2711,9 +2333,7 @@ An EphemeralContainer is a temporary container that you may add to an existing P
 |**startupProbe**|[Probe](#probe)|Probes are not allowed for ephemeral containers.||
 |**stdin**|bool|Whether this container should allocate a buffer for stdin in the container runtime. If this is not set, reads from stdin in the container will always result in EOF. Default is false.||
 |**stdinOnce**|bool|Whether the container runtime should close the stdin channel after it has been opened by a single attach. When stdin is true the stdin stream will remain open across multiple attach sessions. If stdinOnce is set to true, stdin is opened on container start, is empty until the first client attaches to stdin, and then remains open and accepts data until the client disconnects, at which time stdin is closed and remains closed until the container is restarted. If this flag is false, a container processes that reads from stdin will never receive an EOF. Default is false||
-|**targetContainerName**|str|If set, the name of the container from PodSpec that this ephemeral container targets. The ephemeral container will be run in the namespaces (IPC, PID, etc) of this container. If not set then the ephemeral container uses the namespaces configured in the Pod spec.
-
-The container runtime must implement support for this feature. If the runtime does not support namespace targeting then the result of setting this field is undefined.||
+|**targetContainerName**|str|If set, the name of the container from PodSpec that this ephemeral container targets. The ephemeral container will be run in the namespaces (IPC, PID, etc) of this container. If not set then the ephemeral container uses the namespaces configured in the Pod spec.&lt;br&gt;&lt;br&gt;The container runtime must implement support for this feature. If the runtime does not support namespace targeting then the result of setting this field is undefined.||
 |**terminationMessagePath**|str|Optional: Path at which the file to which the container&#39;s termination message will be written is mounted into the container&#39;s filesystem. Message written is intended to be brief final status, such as an assertion failure message. Will be truncated by the node if greater than 4096 bytes. The total message length across all containers will be limited to 12kb. Defaults to /dev/termination-log. Cannot be updated.||
 |**terminationMessagePolicy**|str|Indicate how the termination message should be populated. File will use the contents of terminationMessagePath to populate the container status message on both success and failure. FallbackToLogsOnError will use the last chunk of container log output if the termination message file is empty and the container exited with an error. The log output is limited to 2048 bytes or 80 lines, whichever is smaller. Defaults to File. Cannot be updated.||
 |**tty**|bool|Whether this container should allocate a TTY for itself, also requires &#39;stdin&#39; to be true. Default is false.||
@@ -2728,13 +2348,7 @@ Represents an ephemeral volume that is handled by a normal storage driver.
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**volumeClaimTemplate**|[PersistentVolumeClaimTemplate](#persistentvolumeclaimtemplate)|Will be used to create a stand-alone PVC to provision the volume. The pod in which this EphemeralVolumeSource is embedded will be the owner of the PVC, i.e. the PVC will be deleted together with the pod.  The name of the PVC will be `&lt;pod name&gt;-&lt;volume name&gt;` where `&lt;volume name&gt;` is the name from the `PodSpec.Volumes` array entry. Pod validation will reject the pod if the concatenated name is not valid for a PVC (for example, too long).
-
-An existing PVC with that name that is not owned by the pod will *not* be used for the pod to avoid using an unrelated volume by mistake. Starting the pod is then blocked until the unrelated PVC is removed. If such a pre-created PVC is meant to be used by the pod, the PVC has to updated with an owner reference to the pod once the pod exists. Normally this should not be necessary, but it may be useful when manually reconstructing a broken cluster.
-
-This field is read-only and no changes will be made by Kubernetes to the PVC after it has been created.
-
-Required, must not be nil.||
+|**volumeClaimTemplate**|[PersistentVolumeClaimTemplate](#persistentvolumeclaimtemplate)|Will be used to create a stand-alone PVC to provision the volume. The pod in which this EphemeralVolumeSource is embedded will be the owner of the PVC, i.e. the PVC will be deleted together with the pod.  The name of the PVC will be `&lt;pod name&gt;-&lt;volume name&gt;` where `&lt;volume name&gt;` is the name from the `PodSpec.Volumes` array entry. Pod validation will reject the pod if the concatenated name is not valid for a PVC (for example, too long).&lt;br&gt;&lt;br&gt;An existing PVC with that name that is not owned by the pod will *not* be used for the pod to avoid using an unrelated volume by mistake. Starting the pod is then blocked until the unrelated PVC is removed. If such a pre-created PVC is meant to be used by the pod, the PVC has to updated with an owner reference to the pod once the pod exists. Normally this should not be necessary, but it may be useful when manually reconstructing a broken cluster.&lt;br&gt;&lt;br&gt;This field is read-only and no changes will be made by Kubernetes to the PVC after it has been created.&lt;br&gt;&lt;br&gt;Required, must not be nil.||
 ### Event
 
 Event is a report of an event somewhere in the cluster.  Events have a limited retention time and triggers and messages may evolve with time.  Event consumers should not rely on the timing of an event with a given Reason reflecting a consistent underlying trigger, or the continued existence of events with that Reason.  Events should be treated as informative, best-effort, supplemental data.
@@ -2800,7 +2414,7 @@ ExecAction describes a &#34;run in container&#34; action.
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**command**|[str]|Command is the command line to execute inside the container, the working directory for the command  is root (&#39;/&#39;) in the container&#39;s filesystem. The command is simply exec&#39;d, it is not run inside a shell, so traditional shell instructions (&#39;|&#39;, etc) won&#39;t work. To use a shell, you need to explicitly call out to that shell. Exit status of 0 is treated as live/healthy and non-zero is unhealthy.||
+|**command**|[str]|Command is the command line to execute inside the container, the working directory for the command  is root (&#39;/&#39;) in the container&#39;s filesystem. The command is simply exec&#39;d, it is not run inside a shell, so traditional shell instructions (&#39;\|&#39;, etc) won&#39;t work. To use a shell, you need to explicitly call out to that shell. Exit status of 0 is treated as live/healthy and non-zero is unhealthy.||
 ### FCVolumeSource
 
 Represents a Fibre Channel volume. Fibre Channel volumes can only be mounted as read/write once. Fibre Channel volumes support ownership management and SELinux relabeling.
@@ -2871,9 +2485,7 @@ k8s api core v1 g RPC action
 | name | type | description | default value |
 | --- | --- | --- | --- |
 |**port** `required`|int|Port number of the gRPC service. Number must be in the range 1 to 65535.||
-|**service**|str|Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md).
-
-If this is not specified, the default behavior is defined by gRPC.||
+|**service**|str|Service is the name of the service to place in the gRPC HealthCheckRequest (see https://github.com/grpc/grpc/blob/master/doc/health-checking.md).&lt;br&gt;&lt;br&gt;If this is not specified, the default behavior is defined by gRPC.||
 ### GitRepoVolumeSource
 
 Represents a volume that is populated with the contents of a git repository. Git repo volumes do not support ownership management. Git repo volumes support SELinux relabeling.  DEPRECATED: GitRepo is deprecated. To provision a container with a git repo, mount an EmptyDir into an InitContainer that clones the repo using git, then mount the EmptyDir into the Pod&#39;s container.
@@ -3429,14 +3041,7 @@ PersistentVolumeClaimSpec describes the common attributes of storage devices and
 | --- | --- | --- | --- |
 |**accessModes**|[str]|accessModes contains the desired access modes the volume should have. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#access-modes-1||
 |**dataSource**|[TypedLocalObjectReference](#typedlocalobjectreference)|dataSource field can be used to specify either: * An existing VolumeSnapshot object (snapshot.storage.k8s.io/VolumeSnapshot) * An existing PVC (PersistentVolumeClaim) If the provisioner or an external controller can support the specified data source, it will create a new volume based on the contents of the specified data source. When the AnyVolumeDataSource feature gate is enabled, dataSource contents will be copied to dataSourceRef, and dataSourceRef contents will be copied to dataSource when dataSourceRef.namespace is not specified. If the namespace is specified, then dataSourceRef will not be copied to dataSource.||
-|**dataSourceRef**|[TypedObjectReference](#typedobjectreference)|dataSourceRef specifies the object from which to populate the volume with data, if a non-empty volume is desired. This may be any object from a non-empty API group (non core object) or a PersistentVolumeClaim object. When this field is specified, volume binding will only succeed if the type of the specified object matches some installed volume populator or dynamic provisioner. This field will replace the functionality of the dataSource field and as such if both fields are non-empty, they must have the same value. For backwards compatibility, when namespace isn&#39;t specified in dataSourceRef, both fields (dataSource and dataSourceRef) will be set to the same value automatically if one of them is empty and the other is non-empty. When namespace is specified in dataSourceRef, dataSource isn&#39;t set to the same value and must be empty. There are three important differences between dataSource and dataSourceRef: * While dataSource only allows two specific types of objects, dataSourceRef
-allows any non-core object, as well as PersistentVolumeClaim objects.
-* While dataSource ignores disallowed values (dropping them), dataSourceRef
-preserves all values, and generates an error if a disallowed value is
-specified.
-* While dataSource only allows local objects, dataSourceRef allows objects
-in any namespaces.
-(Beta) Using this field requires the AnyVolumeDataSource feature gate to be enabled. (Alpha) Using the namespace field of dataSourceRef requires the CrossNamespaceVolumeDataSource feature gate to be enabled.||
+|**dataSourceRef**|[TypedObjectReference](#typedobjectreference)|dataSourceRef specifies the object from which to populate the volume with data, if a non-empty volume is desired. This may be any object from a non-empty API group (non core object) or a PersistentVolumeClaim object. When this field is specified, volume binding will only succeed if the type of the specified object matches some installed volume populator or dynamic provisioner. This field will replace the functionality of the dataSource field and as such if both fields are non-empty, they must have the same value. For backwards compatibility, when namespace isn&#39;t specified in dataSourceRef, both fields (dataSource and dataSourceRef) will be set to the same value automatically if one of them is empty and the other is non-empty. When namespace is specified in dataSourceRef, dataSource isn&#39;t set to the same value and must be empty. There are three important differences between dataSource and dataSourceRef: * While dataSource only allows two specific types of objects, dataSourceRef&lt;br&gt;allows any non-core object, as well as PersistentVolumeClaim objects.&lt;br&gt;* While dataSource ignores disallowed values (dropping them), dataSourceRef&lt;br&gt;preserves all values, and generates an error if a disallowed value is&lt;br&gt;specified.&lt;br&gt;* While dataSource only allows local objects, dataSourceRef allows objects&lt;br&gt;in any namespaces.&lt;br&gt;(Beta) Using this field requires the AnyVolumeDataSource feature gate to be enabled. (Alpha) Using the namespace field of dataSourceRef requires the CrossNamespaceVolumeDataSource feature gate to be enabled.||
 |**resources**|[ResourceRequirements](#resourcerequirements)|resources represents the minimum resources the volume should have. If RecoverVolumeExpansionFailure feature is enabled users are allowed to specify resource requirements that are lower than previous value but must still be higher than capacity recorded in the status field of the claim. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#resources||
 |**selector**|[LabelSelector](#labelselector)|selector is a label query over volumes to consider for binding.||
 |**storageClassName**|str|storageClassName is the name of the StorageClass required by the claim. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#class-1||
@@ -3692,11 +3297,7 @@ PodSecurityContext holds pod-level security attributes and common container sett
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**fsGroup**|int|A special supplemental group that applies to all containers in a pod. Some volume types allow the Kubelet to change the ownership of that volume to be owned by the pod:
-
-1. The owning GID will be the FSGroup 2. The setgid bit is set (new files created in the volume will be owned by FSGroup) 3. The permission bits are OR&#39;d with rw-rw----
-
-If unset, the Kubelet will not modify the ownership and permissions of any volume. Note that this field cannot be set when spec.os.name is windows.||
+|**fsGroup**|int|A special supplemental group that applies to all containers in a pod. Some volume types allow the Kubelet to change the ownership of that volume to be owned by the pod:&lt;br&gt;&lt;br&gt;1. The owning GID will be the FSGroup 2. The setgid bit is set (new files created in the volume will be owned by FSGroup) 3. The permission bits are OR&#39;d with rw-rw----&lt;br&gt;&lt;br&gt;If unset, the Kubelet will not modify the ownership and permissions of any volume. Note that this field cannot be set when spec.os.name is windows.||
 |**fsGroupChangePolicy**|str|fsGroupChangePolicy defines behavior of changing ownership and permission of the volume before being exposed inside Pod. This field will only apply to volume types which support fsGroup based ownership(and permissions). It will have no effect on ephemeral volume types such as: secret, configmaps and emptydir. Valid values are &#34;OnRootMismatch&#34; and &#34;Always&#34;. If not specified, &#34;Always&#34; is used. Note that this field cannot be set when spec.os.name is windows.||
 |**runAsGroup**|int|The GID to run the entrypoint of the container process. Uses runtime default if unset. May also be set in SecurityContext.  If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence for that container. Note that this field cannot be set when spec.os.name is windows.||
 |**runAsNonRoot**|bool|Indicates that the container must run as a non-root user. If true, the Kubelet will validate the image at runtime to ensure that it does not run as UID 0 (root) and fail to start the container if it does. If unset or false, no such validation will be performed. May also be set in SecurityContext.  If set in both SecurityContext and PodSecurityContext, the value specified in SecurityContext takes precedence.||
@@ -3732,29 +3333,17 @@ PodSpec is a description of a pod.
 |**initContainers**|[[Container](#container)]|List of initialization containers belonging to the pod. Init containers are executed in order prior to containers being started. If any init container fails, the pod is considered to have failed and is handled according to its restartPolicy. The name for an init container or normal container must be unique among all containers. Init containers may not have Lifecycle actions, Readiness probes, Liveness probes, or Startup probes. The resourceRequirements of an init container are taken into account during scheduling by finding the highest request/limit for each resource type, and then using the max of of that value or the sum of the normal containers. Limits are applied to init containers in a similar fashion. Init containers cannot currently be added or removed. Cannot be updated. More info: https://kubernetes.io/docs/concepts/workloads/pods/init-containers/||
 |**nodeName**|str|NodeName is a request to schedule this pod onto a specific node. If it is non-empty, the scheduler simply schedules this pod onto that node, assuming that it fits resource requirements.||
 |**nodeSelector**|{str:str}|NodeSelector is a selector which must be true for the pod to fit on a node. Selector which must match a node&#39;s labels for the pod to be scheduled on that node. More info: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/||
-|**os**|[PodOS](#podos)|Specifies the OS of the containers in the pod. Some pod and container fields are restricted if this is set.
-
-If the OS field is set to linux, the following fields must be unset: -securityContext.windowsOptions
-
-If the OS field is set to windows, following fields must be unset: - spec.hostPID - spec.hostIPC - spec.hostUsers - spec.securityContext.seLinuxOptions - spec.securityContext.seccompProfile - spec.securityContext.fsGroup - spec.securityContext.fsGroupChangePolicy - spec.securityContext.sysctls - spec.shareProcessNamespace - spec.securityContext.runAsUser - spec.securityContext.runAsGroup - spec.securityContext.supplementalGroups - spec.containers[*].securityContext.seLinuxOptions - spec.containers[*].securityContext.seccompProfile - spec.containers[*].securityContext.capabilities - spec.containers[*].securityContext.readOnlyRootFilesystem - spec.containers[*].securityContext.privileged - spec.containers[*].securityContext.allowPrivilegeEscalation - spec.containers[*].securityContext.procMount - spec.containers[*].securityContext.runAsUser - spec.containers[*].securityContext.runAsGroup||
+|**os**|[PodOS](#podos)|Specifies the OS of the containers in the pod. Some pod and container fields are restricted if this is set.&lt;br&gt;&lt;br&gt;If the OS field is set to linux, the following fields must be unset: -securityContext.windowsOptions&lt;br&gt;&lt;br&gt;If the OS field is set to windows, following fields must be unset: - spec.hostPID - spec.hostIPC - spec.hostUsers - spec.securityContext.seLinuxOptions - spec.securityContext.seccompProfile - spec.securityContext.fsGroup - spec.securityContext.fsGroupChangePolicy - spec.securityContext.sysctls - spec.shareProcessNamespace - spec.securityContext.runAsUser - spec.securityContext.runAsGroup - spec.securityContext.supplementalGroups - spec.containers[*].securityContext.seLinuxOptions - spec.containers[*].securityContext.seccompProfile - spec.containers[*].securityContext.capabilities - spec.containers[*].securityContext.readOnlyRootFilesystem - spec.containers[*].securityContext.privileged - spec.containers[*].securityContext.allowPrivilegeEscalation - spec.containers[*].securityContext.procMount - spec.containers[*].securityContext.runAsUser - spec.containers[*].securityContext.runAsGroup||
 |**overhead**|{str:str}|Overhead represents the resource overhead associated with running a pod for a given RuntimeClass. This field will be autopopulated at admission time by the RuntimeClass admission controller. If the RuntimeClass admission controller is enabled, overhead must not be set in Pod create requests. The RuntimeClass admission controller will reject Pod create requests which have the overhead already set. If RuntimeClass is configured and selected in the PodSpec, Overhead will be set to the value defined in the corresponding RuntimeClass, otherwise it will remain unset and treated as zero. More info: https://git.k8s.io/enhancements/keps/sig-node/688-pod-overhead/README.md||
 |**preemptionPolicy**|str|PreemptionPolicy is the Policy for preempting pods with lower priority. One of Never, PreemptLowerPriority. Defaults to PreemptLowerPriority if unset.||
 |**priority**|int|The priority value. Various system components use this field to find the priority of the pod. When Priority Admission Controller is enabled, it prevents users from setting this field. The admission controller populates this field from PriorityClassName. The higher the value, the higher the priority.||
 |**priorityClassName**|str|If specified, indicates the pod&#39;s priority. &#34;system-node-critical&#34; and &#34;system-cluster-critical&#34; are two special keywords which indicate the highest priorities with the former being the highest priority. Any other name must be defined by creating a PriorityClass object with that name. If not specified, the pod priority will be default or zero if there is no default.||
 |**readinessGates**|[[PodReadinessGate](#podreadinessgate)]|If specified, all readiness gates will be evaluated for pod readiness. A pod is ready when all its containers are ready AND all conditions specified in the readiness gates have status equal to &#34;True&#34; More info: https://git.k8s.io/enhancements/keps/sig-network/580-pod-readiness-gates||
-|**resourceClaims**|[[PodResourceClaim](#podresourceclaim)]|ResourceClaims defines which ResourceClaims must be allocated and reserved before the Pod is allowed to start. The resources will be made available to those containers which consume them by name.
-
-This is an alpha field and requires enabling the DynamicResourceAllocation feature gate.
-
-This field is immutable.||
+|**resourceClaims**|[[PodResourceClaim](#podresourceclaim)]|ResourceClaims defines which ResourceClaims must be allocated and reserved before the Pod is allowed to start. The resources will be made available to those containers which consume them by name.&lt;br&gt;&lt;br&gt;This is an alpha field and requires enabling the DynamicResourceAllocation feature gate.&lt;br&gt;&lt;br&gt;This field is immutable.||
 |**restartPolicy**|str|Restart policy for all containers within the pod. One of Always, OnFailure, Never. In some contexts, only a subset of those values may be permitted. Default to Always. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/#restart-policy||
 |**runtimeClassName**|str|RuntimeClassName refers to a RuntimeClass object in the node.k8s.io group, which should be used to run this pod.  If no RuntimeClass resource matches the named class, the pod will not be run. If unset or empty, the &#34;legacy&#34; RuntimeClass will be used, which is an implicit class with an empty definition that uses the default runtime handler. More info: https://git.k8s.io/enhancements/keps/sig-node/585-runtime-class||
 |**schedulerName**|str|If specified, the pod will be dispatched by specified scheduler. If not specified, the pod will be dispatched by default scheduler.||
-|**schedulingGates**|[[PodSchedulingGate](#podschedulinggate)]|SchedulingGates is an opaque list of values that if specified will block scheduling the pod. If schedulingGates is not empty, the pod will stay in the SchedulingGated state and the scheduler will not attempt to schedule the pod.
-
-SchedulingGates can only be set at pod creation time, and be removed only afterwards.
-
-This is a beta feature enabled by the PodSchedulingReadiness feature gate.||
+|**schedulingGates**|[[PodSchedulingGate](#podschedulinggate)]|SchedulingGates is an opaque list of values that if specified will block scheduling the pod. If schedulingGates is not empty, the pod will stay in the SchedulingGated state and the scheduler will not attempt to schedule the pod.&lt;br&gt;&lt;br&gt;SchedulingGates can only be set at pod creation time, and be removed only afterwards.&lt;br&gt;&lt;br&gt;This is a beta feature enabled by the PodSchedulingReadiness feature gate.||
 |**securityContext**|[PodSecurityContext](#podsecuritycontext)|SecurityContext holds pod-level security attributes and common container settings. Optional: Defaults to empty.  See type description for default values of each field.||
 |**serviceAccount**|str|DeprecatedServiceAccount is a depreciated alias for ServiceAccountName. Deprecated: Use serviceAccountName instead.||
 |**serviceAccountName**|str|ServiceAccountName is the name of the ServiceAccount to use to run this pod. More info: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/||
@@ -3780,11 +3369,7 @@ PodStatus represents information about the status of a pod. Status may trail the
 |**initContainerStatuses**|[[ContainerStatus](#containerstatus)]|The list has one entry per init container in the manifest. The most recent successful init container will have ready = true, the most recently started container will have startTime set. More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-and-container-status||
 |**message**|str|A human readable message indicating details about why the pod is in this condition.||
 |**nominatedNodeName**|str|nominatedNodeName is set only when this pod preempts other pods on the node, but it cannot be scheduled right away as preemption victims receive their graceful termination periods. This field does not guarantee that the pod will be scheduled on this node. Scheduler may decide to place the pod elsewhere if other nodes become available sooner. Scheduler may also decide to give the resources on this node to a higher priority pod that is created after preemption. As a result, this field may be different than PodSpec.nodeName when the pod is scheduled.||
-|**phase**|str|The phase of a Pod is a simple, high-level summary of where the Pod is in its lifecycle. The conditions array, the reason and message fields, and the individual container status arrays contain more detail about the pod&#39;s status. There are five possible phase values:
-
-Pending: The pod has been accepted by the Kubernetes system, but one or more of the container images has not been created. This includes time before being scheduled as well as time spent downloading images over the network, which could take a while. Running: The pod has been bound to a node, and all of the containers have been created. At least one container is still running, or is in the process of starting or restarting. Succeeded: All containers in the pod have terminated in success, and will not be restarted. Failed: All containers in the pod have terminated, and at least one container has terminated in failure. The container either exited with non-zero status or was terminated by the system. Unknown: For some reason the state of the pod could not be obtained, typically due to an error in communicating with the host of the pod.
-
-More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-phase||
+|**phase**|str|The phase of a Pod is a simple, high-level summary of where the Pod is in its lifecycle. The conditions array, the reason and message fields, and the individual container status arrays contain more detail about the pod&#39;s status. There are five possible phase values:&lt;br&gt;&lt;br&gt;Pending: The pod has been accepted by the Kubernetes system, but one or more of the container images has not been created. This includes time before being scheduled as well as time spent downloading images over the network, which could take a while. Running: The pod has been bound to a node, and all of the containers have been created. At least one container is still running, or is in the process of starting or restarting. Succeeded: All containers in the pod have terminated in success, and will not be restarted. Failed: All containers in the pod have terminated, and at least one container has terminated in failure. The container either exited with non-zero status or was terminated by the system. Unknown: For some reason the state of the pod could not be obtained, typically due to an error in communicating with the host of the pod.&lt;br&gt;&lt;br&gt;More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle#pod-phase||
 |**podIP**|str|IP address allocated to the pod. Routable at least within the cluster. Empty if not yet allocated.||
 |**podIPs**|[[PodIP](#podip)]|podIPs holds the IP addresses allocated to the pod. If this field is specified, the 0th entry must match the podIP field. Pods may be allocated at most 1 value for each of IPv4 and IPv6. This list is empty if no IPs have been allocated yet.||
 |**qosClass**|str|The Quality of Service (QOS) classification assigned to the pod based on resource requirements See PodQOSClass type for available QOS classes More info: https://kubernetes.io/docs/concepts/workloads/pods/pod-qos/#quality-of-service-classes||
@@ -3833,10 +3418,7 @@ k8s api core v1 port status
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**error**|str|Error is to record the problem with the service port The format of the error shall comply with the following rules: - built-in error values shall be specified in this file and those shall use
-CamelCase names
-- cloud provider specific error values must have names that comply with the
-format foo.example.com/CamelCase.||
+|**error**|str|Error is to record the problem with the service port The format of the error shall comply with the following rules: - built-in error values shall be specified in this file and those shall use&lt;br&gt;CamelCase names&lt;br&gt;- cloud provider specific error values must have names that comply with the&lt;br&gt;format foo.example.com/CamelCase.||
 |**port** `required`|int|Port is the port number of the service port of which status is recorded here||
 |**protocol** `required`|str|||
 ### PortworxVolumeSource
@@ -4070,11 +3652,7 @@ ResourceRequirements describes the compute resource requirements.
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**claims**|[[ResourceClaim](#resourceclaim)]|Claims lists the names of resources, defined in spec.resourceClaims, that are used by this container.
-
-This is an alpha field and requires enabling the DynamicResourceAllocation feature gate.
-
-This field is immutable. It can only be set for containers.||
+|**claims**|[[ResourceClaim](#resourceclaim)]|Claims lists the names of resources, defined in spec.resourceClaims, that are used by this container.&lt;br&gt;&lt;br&gt;This is an alpha field and requires enabling the DynamicResourceAllocation feature gate.&lt;br&gt;&lt;br&gt;This field is immutable. It can only be set for containers.||
 |**limits**|{str:str}|Limits describes the maximum amount of compute resources allowed. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/||
 |**requests**|{str:str}|Requests describes the minimum amount of compute resources required. If Requests is omitted for a container, it defaults to Limits if that is explicitly specified, otherwise to an implementation-defined value. Requests cannot exceed Limits. More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/||
 ### SELinuxOptions
@@ -4340,17 +3918,13 @@ ServiceSpec describes the attributes that a user creates on a service.
 | --- | --- | --- | --- |
 |**allocateLoadBalancerNodePorts**|bool|allocateLoadBalancerNodePorts defines if NodePorts will be automatically allocated for services with type LoadBalancer.  Default is &#34;true&#34;. It may be set to &#34;false&#34; if the cluster load-balancer does not rely on NodePorts.  If the caller requests specific NodePorts (by specifying a value), those requests will be respected, regardless of this field. This field may only be set for services with type LoadBalancer and will be cleared if the type is changed to any other type.||
 |**clusterIP**|str|clusterIP is the IP address of the service and is usually assigned randomly. If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service; otherwise creation of the service will fail. This field may not be changed through updates unless the type field is also being changed to ExternalName (which requires this field to be blank) or the type field is being changed from ExternalName (in which case this field may optionally be specified, as describe above).  Valid values are &#34;None&#34;, empty string (&#34;&#34;), or a valid IP address. Setting this to &#34;None&#34; makes a &#34;headless service&#34; (no virtual IP), which is useful when direct endpoint connections are preferred and proxying is not required.  Only applies to types ClusterIP, NodePort, and LoadBalancer. If this field is specified when creating a Service of type ExternalName, creation will fail. This field will be wiped when updating a Service to type ExternalName. More info: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies||
-|**clusterIPs**|[str]|ClusterIPs is a list of IP addresses assigned to this service, and are usually assigned randomly.  If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service; otherwise creation of the service will fail. This field may not be changed through updates unless the type field is also being changed to ExternalName (which requires this field to be empty) or the type field is being changed from ExternalName (in which case this field may optionally be specified, as describe above).  Valid values are &#34;None&#34;, empty string (&#34;&#34;), or a valid IP address.  Setting this to &#34;None&#34; makes a &#34;headless service&#34; (no virtual IP), which is useful when direct endpoint connections are preferred and proxying is not required.  Only applies to types ClusterIP, NodePort, and LoadBalancer. If this field is specified when creating a Service of type ExternalName, creation will fail. This field will be wiped when updating a Service to type ExternalName.  If this field is not specified, it will be initialized from the clusterIP field.  If this field is specified, clients must ensure that clusterIPs[0] and clusterIP have the same value.
-
-This field may hold a maximum of two entries (dual-stack IPs, in either order). These IPs must correspond to the values of the ipFamilies field. Both clusterIPs and ipFamilies are governed by the ipFamilyPolicy field. More info: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies||
+|**clusterIPs**|[str]|ClusterIPs is a list of IP addresses assigned to this service, and are usually assigned randomly.  If an address is specified manually, is in-range (as per system configuration), and is not in use, it will be allocated to the service; otherwise creation of the service will fail. This field may not be changed through updates unless the type field is also being changed to ExternalName (which requires this field to be empty) or the type field is being changed from ExternalName (in which case this field may optionally be specified, as describe above).  Valid values are &#34;None&#34;, empty string (&#34;&#34;), or a valid IP address.  Setting this to &#34;None&#34; makes a &#34;headless service&#34; (no virtual IP), which is useful when direct endpoint connections are preferred and proxying is not required.  Only applies to types ClusterIP, NodePort, and LoadBalancer. If this field is specified when creating a Service of type ExternalName, creation will fail. This field will be wiped when updating a Service to type ExternalName.  If this field is not specified, it will be initialized from the clusterIP field.  If this field is specified, clients must ensure that clusterIPs[0] and clusterIP have the same value.&lt;br&gt;&lt;br&gt;This field may hold a maximum of two entries (dual-stack IPs, in either order). These IPs must correspond to the values of the ipFamilies field. Both clusterIPs and ipFamilies are governed by the ipFamilyPolicy field. More info: https://kubernetes.io/docs/concepts/services-networking/service/#virtual-ips-and-service-proxies||
 |**externalIPs**|[str]|externalIPs is a list of IP addresses for which nodes in the cluster will also accept traffic for this service.  These IPs are not managed by Kubernetes.  The user is responsible for ensuring that traffic arrives at a node with this IP.  A common example is external load-balancers that are not part of the Kubernetes system.||
 |**externalName**|str|externalName is the external reference that discovery mechanisms will return as an alias for this service (e.g. a DNS CNAME record). No proxying will be involved.  Must be a lowercase RFC-1123 hostname (https://tools.ietf.org/html/rfc1123) and requires `type` to be &#34;ExternalName&#34;.||
 |**externalTrafficPolicy**|str|externalTrafficPolicy describes how nodes distribute service traffic they receive on one of the Service&#39;s &#34;externally-facing&#34; addresses (NodePorts, ExternalIPs, and LoadBalancer IPs). If set to &#34;Local&#34;, the proxy will configure the service in a way that assumes that external load balancers will take care of balancing the service traffic between nodes, and so each node will deliver traffic only to the node-local endpoints of the service, without masquerading the client source IP. (Traffic mistakenly sent to a node with no endpoints will be dropped.) The default value, &#34;Cluster&#34;, uses the standard behavior of routing to all endpoints evenly (possibly modified by topology and other features). Note that traffic sent to an External IP or LoadBalancer IP from within the cluster will always get &#34;Cluster&#34; semantics, but clients sending to a NodePort from within the cluster may need to take traffic policy into account when picking a node.||
 |**healthCheckNodePort**|int|healthCheckNodePort specifies the healthcheck nodePort for the service. This only applies when type is set to LoadBalancer and externalTrafficPolicy is set to Local. If a value is specified, is in-range, and is not in use, it will be used.  If not specified, a value will be automatically allocated.  External systems (e.g. load-balancers) can use this port to determine if a given node holds endpoints for this service or not.  If this field is specified when creating a Service which does not need it, creation will fail. This field will be wiped when updating a Service to no longer need it (e.g. changing type). This field cannot be updated once set.||
 |**internalTrafficPolicy**|str|InternalTrafficPolicy describes how nodes distribute service traffic they receive on the ClusterIP. If set to &#34;Local&#34;, the proxy will assume that pods only want to talk to endpoints of the service on the same node as the pod, dropping the traffic if there are no local endpoints. The default value, &#34;Cluster&#34;, uses the standard behavior of routing to all endpoints evenly (possibly modified by topology and other features).||
-|**ipFamilies**|[str]|IPFamilies is a list of IP families (e.g. IPv4, IPv6) assigned to this service. This field is usually assigned automatically based on cluster configuration and the ipFamilyPolicy field. If this field is specified manually, the requested family is available in the cluster, and ipFamilyPolicy allows it, it will be used; otherwise creation of the service will fail. This field is conditionally mutable: it allows for adding or removing a secondary IP family, but it does not allow changing the primary IP family of the Service. Valid values are &#34;IPv4&#34; and &#34;IPv6&#34;.  This field only applies to Services of types ClusterIP, NodePort, and LoadBalancer, and does apply to &#34;headless&#34; services. This field will be wiped when updating a Service to type ExternalName.
-
-This field may hold a maximum of two entries (dual-stack families, in either order).  These families must correspond to the values of the clusterIPs field, if specified. Both clusterIPs and ipFamilies are governed by the ipFamilyPolicy field.||
+|**ipFamilies**|[str]|IPFamilies is a list of IP families (e.g. IPv4, IPv6) assigned to this service. This field is usually assigned automatically based on cluster configuration and the ipFamilyPolicy field. If this field is specified manually, the requested family is available in the cluster, and ipFamilyPolicy allows it, it will be used; otherwise creation of the service will fail. This field is conditionally mutable: it allows for adding or removing a secondary IP family, but it does not allow changing the primary IP family of the Service. Valid values are &#34;IPv4&#34; and &#34;IPv6&#34;.  This field only applies to Services of types ClusterIP, NodePort, and LoadBalancer, and does apply to &#34;headless&#34; services. This field will be wiped when updating a Service to type ExternalName.&lt;br&gt;&lt;br&gt;This field may hold a maximum of two entries (dual-stack families, in either order).  These families must correspond to the values of the clusterIPs field, if specified. Both clusterIPs and ipFamilies are governed by the ipFamilyPolicy field.||
 |**ipFamilyPolicy**|str|IPFamilyPolicy represents the dual-stack-ness requested or required by this Service. If there is no value provided, then this field will be set to SingleStack. Services can be &#34;SingleStack&#34; (a single IP family), &#34;PreferDualStack&#34; (two IP families on dual-stack configured clusters or a single IP family on single-stack clusters), or &#34;RequireDualStack&#34; (two IP families on dual-stack configured clusters, otherwise fail). The ipFamilies and clusterIPs fields depend on the value of this field. This field will be wiped when updating a service to type ExternalName.||
 |**loadBalancerClass**|str|loadBalancerClass is the class of the load balancer implementation this Service belongs to. If specified, the value of this field must be a label-style identifier, with an optional prefix, e.g. &#34;internal-vip&#34; or &#34;example.com/internal-vip&#34;. Unprefixed names are reserved for end-users. This field can only be set when the Service type is &#39;LoadBalancer&#39;. If not set, the default load balancer implementation is used, today this is typically done through the cloud provider integration, but should apply for any default implementation. If set, it is assumed that a load balancer implementation is watching for Services with a matching class. Any default load balancer implementation (e.g. cloud providers) should ignore Services that set this field. This field can only be set when creating or updating a Service to type &#39;LoadBalancer&#39;. Once set, it can not be changed. This field will be wiped when a service is updated to a non &#39;LoadBalancer&#39; type.||
 |**loadBalancerIP**|str|Only applies to Service Type: LoadBalancer. This feature depends on whether the underlying cloud-provider supports specifying the loadBalancerIP when a load balancer is created. This field will be ignored if the cloud-provider does not support the feature. Deprecated: This field was under-specified and its meaning varies across implementations, and it cannot support dual-stack. As of Kubernetes v1.24, users are encouraged to use implementation-specific annotations when available. This field may be removed in a future API version.||
@@ -4479,26 +4053,13 @@ TopologySpreadConstraint specifies how to spread matching pods among the given t
 | name | type | description | default value |
 | --- | --- | --- | --- |
 |**labelSelector**|[LabelSelector](#labelselector)|LabelSelector is used to find matching pods. Pods that match this label selector are counted to determine the number of pods in their corresponding topology domain.||
-|**matchLabelKeys**|[str]|MatchLabelKeys is a set of pod label keys to select the pods over which spreading will be calculated. The keys are used to lookup values from the incoming pod labels, those key-value labels are ANDed with labelSelector to select the group of existing pods over which spreading will be calculated for the incoming pod. The same key is forbidden to exist in both MatchLabelKeys and LabelSelector. MatchLabelKeys cannot be set when LabelSelector isn&#39;t set. Keys that don&#39;t exist in the incoming pod labels will be ignored. A null or empty list means only match against labelSelector.
-
-This is a beta field and requires the MatchLabelKeysInPodTopologySpread feature gate to be enabled (enabled by default).||
-|**maxSkew** `required`|int|MaxSkew describes the degree to which pods may be unevenly distributed. When `whenUnsatisfiable=DoNotSchedule`, it is the maximum permitted difference between the number of matching pods in the target topology and the global minimum. The global minimum is the minimum number of matching pods in an eligible domain or zero if the number of eligible domains is less than MinDomains. For example, in a 3-zone cluster, MaxSkew is set to 1, and pods with the same labelSelector spread as 2/2/1: In this case, the global minimum is 1. | zone1 | zone2 | zone3 | |  P P  |  P P  |   P   | - if MaxSkew is 1, incoming pod can only be scheduled to zone3 to become 2/2/2; scheduling it onto zone1(zone2) would make the ActualSkew(3-1) on zone1(zone2) violate MaxSkew(1). - if MaxSkew is 2, incoming pod can be scheduled onto any zone. When `whenUnsatisfiable=ScheduleAnyway`, it is used to give higher precedence to topologies that satisfy it. It&#39;s a required field. Default value is 1 and 0 is not allowed.||
-|**minDomains**|int|MinDomains indicates a minimum number of eligible domains. When the number of eligible domains with matching topology keys is less than minDomains, Pod Topology Spread treats &#34;global minimum&#34; as 0, and then the calculation of Skew is performed. And when the number of eligible domains with matching topology keys equals or greater than minDomains, this value has no effect on scheduling. As a result, when the number of eligible domains is less than minDomains, scheduler won&#39;t schedule more than maxSkew Pods to those domains. If value is nil, the constraint behaves as if MinDomains is equal to 1. Valid values are integers greater than 0. When value is not nil, WhenUnsatisfiable must be DoNotSchedule.
-
-For example, in a 3-zone cluster, MaxSkew is set to 2, MinDomains is set to 5 and pods with the same labelSelector spread as 2/2/2: | zone1 | zone2 | zone3 | |  P P  |  P P  |  P P  | The number of domains is less than 5(MinDomains), so &#34;global minimum&#34; is treated as 0. In this situation, new pod with the same labelSelector cannot be scheduled, because computed skew will be 3(3 - 0) if new Pod is scheduled to any of the three zones, it will violate MaxSkew.
-
-This is a beta field and requires the MinDomainsInPodTopologySpread feature gate to be enabled (enabled by default).||
-|**nodeAffinityPolicy**|str|NodeAffinityPolicy indicates how we will treat Pod&#39;s nodeAffinity/nodeSelector when calculating pod topology spread skew. Options are: - Honor: only nodes matching nodeAffinity/nodeSelector are included in the calculations. - Ignore: nodeAffinity/nodeSelector are ignored. All nodes are included in the calculations.
-
-If this value is nil, the behavior is equivalent to the Honor policy. This is a beta-level feature default enabled by the NodeInclusionPolicyInPodTopologySpread feature flag.||
-|**nodeTaintsPolicy**|str|NodeTaintsPolicy indicates how we will treat node taints when calculating pod topology spread skew. Options are: - Honor: nodes without taints, along with tainted nodes for which the incoming pod has a toleration, are included. - Ignore: node taints are ignored. All nodes are included.
-
-If this value is nil, the behavior is equivalent to the Ignore policy. This is a beta-level feature default enabled by the NodeInclusionPolicyInPodTopologySpread feature flag.||
+|**matchLabelKeys**|[str]|MatchLabelKeys is a set of pod label keys to select the pods over which spreading will be calculated. The keys are used to lookup values from the incoming pod labels, those key-value labels are ANDed with labelSelector to select the group of existing pods over which spreading will be calculated for the incoming pod. The same key is forbidden to exist in both MatchLabelKeys and LabelSelector. MatchLabelKeys cannot be set when LabelSelector isn&#39;t set. Keys that don&#39;t exist in the incoming pod labels will be ignored. A null or empty list means only match against labelSelector.&lt;br&gt;&lt;br&gt;This is a beta field and requires the MatchLabelKeysInPodTopologySpread feature gate to be enabled (enabled by default).||
+|**maxSkew** `required`|int|MaxSkew describes the degree to which pods may be unevenly distributed. When `whenUnsatisfiable=DoNotSchedule`, it is the maximum permitted difference between the number of matching pods in the target topology and the global minimum. The global minimum is the minimum number of matching pods in an eligible domain or zero if the number of eligible domains is less than MinDomains. For example, in a 3-zone cluster, MaxSkew is set to 1, and pods with the same labelSelector spread as 2/2/1: In this case, the global minimum is 1. \| zone1 \| zone2 \| zone3 \| \|  P P  \|  P P  \|   P   \| - if MaxSkew is 1, incoming pod can only be scheduled to zone3 to become 2/2/2; scheduling it onto zone1(zone2) would make the ActualSkew(3-1) on zone1(zone2) violate MaxSkew(1). - if MaxSkew is 2, incoming pod can be scheduled onto any zone. When `whenUnsatisfiable=ScheduleAnyway`, it is used to give higher precedence to topologies that satisfy it. It&#39;s a required field. Default value is 1 and 0 is not allowed.||
+|**minDomains**|int|MinDomains indicates a minimum number of eligible domains. When the number of eligible domains with matching topology keys is less than minDomains, Pod Topology Spread treats &#34;global minimum&#34; as 0, and then the calculation of Skew is performed. And when the number of eligible domains with matching topology keys equals or greater than minDomains, this value has no effect on scheduling. As a result, when the number of eligible domains is less than minDomains, scheduler won&#39;t schedule more than maxSkew Pods to those domains. If value is nil, the constraint behaves as if MinDomains is equal to 1. Valid values are integers greater than 0. When value is not nil, WhenUnsatisfiable must be DoNotSchedule.&lt;br&gt;&lt;br&gt;For example, in a 3-zone cluster, MaxSkew is set to 2, MinDomains is set to 5 and pods with the same labelSelector spread as 2/2/2: \| zone1 \| zone2 \| zone3 \| \|  P P  \|  P P  \|  P P  \| The number of domains is less than 5(MinDomains), so &#34;global minimum&#34; is treated as 0. In this situation, new pod with the same labelSelector cannot be scheduled, because computed skew will be 3(3 - 0) if new Pod is scheduled to any of the three zones, it will violate MaxSkew.&lt;br&gt;&lt;br&gt;This is a beta field and requires the MinDomainsInPodTopologySpread feature gate to be enabled (enabled by default).||
+|**nodeAffinityPolicy**|str|NodeAffinityPolicy indicates how we will treat Pod&#39;s nodeAffinity/nodeSelector when calculating pod topology spread skew. Options are: - Honor: only nodes matching nodeAffinity/nodeSelector are included in the calculations. - Ignore: nodeAffinity/nodeSelector are ignored. All nodes are included in the calculations.&lt;br&gt;&lt;br&gt;If this value is nil, the behavior is equivalent to the Honor policy. This is a beta-level feature default enabled by the NodeInclusionPolicyInPodTopologySpread feature flag.||
+|**nodeTaintsPolicy**|str|NodeTaintsPolicy indicates how we will treat node taints when calculating pod topology spread skew. Options are: - Honor: nodes without taints, along with tainted nodes for which the incoming pod has a toleration, are included. - Ignore: node taints are ignored. All nodes are included.&lt;br&gt;&lt;br&gt;If this value is nil, the behavior is equivalent to the Ignore policy. This is a beta-level feature default enabled by the NodeInclusionPolicyInPodTopologySpread feature flag.||
 |**topologyKey** `required`|str|TopologyKey is the key of node labels. Nodes that have a label with this key and identical values are considered to be in the same topology. We consider each &lt;key, value&gt; as a &#34;bucket&#34;, and try to put balanced number of pods into each bucket. We define a domain as a particular instance of a topology. Also, we define an eligible domain as a domain whose nodes meet the requirements of nodeAffinityPolicy and nodeTaintsPolicy. e.g. If TopologyKey is &#34;kubernetes.io/hostname&#34;, each Node is a domain of that topology. And, if TopologyKey is &#34;topology.kubernetes.io/zone&#34;, each zone is a domain of that topology. It&#39;s a required field.||
-|**whenUnsatisfiable** `required`|str|WhenUnsatisfiable indicates how to deal with a pod if it doesn&#39;t satisfy the spread constraint. - DoNotSchedule (default) tells the scheduler not to schedule it. - ScheduleAnyway tells the scheduler to schedule the pod in any location,
-but giving higher precedence to topologies that would help reduce the
-skew.
-A constraint is considered &#34;Unsatisfiable&#34; for an incoming pod if and only if every possible node assignment for that pod would violate &#34;MaxSkew&#34; on some topology. For example, in a 3-zone cluster, MaxSkew is set to 1, and pods with the same labelSelector spread as 3/1/1: | zone1 | zone2 | zone3 | | P P P |   P   |   P   | If WhenUnsatisfiable is set to DoNotSchedule, incoming pod can only be scheduled to zone2(zone3) to become 3/2/1(3/1/2) as ActualSkew(2-1) on zone2(zone3) satisfies MaxSkew(1). In other words, the cluster can still be imbalanced, but scheduler won&#39;t make it *more* imbalanced. It&#39;s a required field.||
+|**whenUnsatisfiable** `required`|str|WhenUnsatisfiable indicates how to deal with a pod if it doesn&#39;t satisfy the spread constraint. - DoNotSchedule (default) tells the scheduler not to schedule it. - ScheduleAnyway tells the scheduler to schedule the pod in any location,&lt;br&gt;but giving higher precedence to topologies that would help reduce the&lt;br&gt;skew.&lt;br&gt;A constraint is considered &#34;Unsatisfiable&#34; for an incoming pod if and only if every possible node assignment for that pod would violate &#34;MaxSkew&#34; on some topology. For example, in a 3-zone cluster, MaxSkew is set to 1, and pods with the same labelSelector spread as 3/1/1: \| zone1 \| zone2 \| zone3 \| \| P P P \|   P   \|   P   \| If WhenUnsatisfiable is set to DoNotSchedule, incoming pod can only be scheduled to zone2(zone3) to become 3/2/1(3/1/2) as ActualSkew(2-1) on zone2(zone3) satisfies MaxSkew(1). In other words, the cluster can still be imbalanced, but scheduler won&#39;t make it *more* imbalanced. It&#39;s a required field.||
 ### TypedLocalObjectReference
 
 TypedLocalObjectReference contains enough information to let you locate the typed referenced object inside the same namespace.
@@ -4539,20 +4100,7 @@ Volume represents a named volume in a pod that may be accessed by any container 
 |**csi**|[CSIVolumeSource](#csivolumesource)|csi (Container Storage Interface) represents ephemeral storage that is handled by certain external CSI drivers (Beta feature).||
 |**downwardAPI**|[DownwardAPIVolumeSource](#downwardapivolumesource)|downwardAPI represents downward API about the pod that should populate this volume||
 |**emptyDir**|[EmptyDirVolumeSource](#emptydirvolumesource)|emptyDir represents a temporary directory that shares a pod&#39;s lifetime. More info: https://kubernetes.io/docs/concepts/storage/volumes#emptydir||
-|**ephemeral**|[EphemeralVolumeSource](#ephemeralvolumesource)|ephemeral represents a volume that is handled by a cluster storage driver. The volume&#39;s lifecycle is tied to the pod that defines it - it will be created before the pod starts, and deleted when the pod is removed.
-
-Use this if: a) the volume is only needed while the pod runs, b) features of normal volumes like restoring from snapshot or capacity
-tracking are needed,
-c) the storage driver is specified through a storage class, and d) the storage driver supports dynamic volume provisioning through
-a PersistentVolumeClaim (see EphemeralVolumeSource for more
-information on the connection between this volume type
-and PersistentVolumeClaim).
-
-Use PersistentVolumeClaim or one of the vendor-specific APIs for volumes that persist for longer than the lifecycle of an individual pod.
-
-Use CSI for light-weight local ephemeral volumes if the CSI driver is meant to be used that way - see the documentation of the driver for more information.
-
-A pod can use both types of ephemeral volumes and persistent volumes at the same time.||
+|**ephemeral**|[EphemeralVolumeSource](#ephemeralvolumesource)|ephemeral represents a volume that is handled by a cluster storage driver. The volume&#39;s lifecycle is tied to the pod that defines it - it will be created before the pod starts, and deleted when the pod is removed.&lt;br&gt;&lt;br&gt;Use this if: a) the volume is only needed while the pod runs, b) features of normal volumes like restoring from snapshot or capacity&lt;br&gt;tracking are needed,&lt;br&gt;c) the storage driver is specified through a storage class, and d) the storage driver supports dynamic volume provisioning through&lt;br&gt;a PersistentVolumeClaim (see EphemeralVolumeSource for more&lt;br&gt;information on the connection between this volume type&lt;br&gt;and PersistentVolumeClaim).&lt;br&gt;&lt;br&gt;Use PersistentVolumeClaim or one of the vendor-specific APIs for volumes that persist for longer than the lifecycle of an individual pod.&lt;br&gt;&lt;br&gt;Use CSI for light-weight local ephemeral volumes if the CSI driver is meant to be used that way - see the documentation of the driver for more information.&lt;br&gt;&lt;br&gt;A pod can use both types of ephemeral volumes and persistent volumes at the same time.||
 |**fc**|[FCVolumeSource](#fcvolumesource)|fc represents a Fibre Channel resource that is attached to a kubelet&#39;s host machine and then exposed to the pod.||
 |**flexVolume**|[FlexVolumeSource](#flexvolumesource)|flexVolume represents a generic volume resource that is provisioned/attached using an exec based plugin.||
 |**flocker**|[FlockerVolumeSource](#flockervolumesource)|flocker represents a Flocker volume attached to a kubelet&#39;s host machine. This depends on the Flocker control service being running||
@@ -4696,14 +4244,7 @@ EndpointPort represents a Port used by an EndpointSlice
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**appProtocol**|str|The application protocol for this port. This is used as a hint for implementations to offer richer behavior for protocols that they understand. This field follows standard Kubernetes label syntax. Valid values are either:
-
-* Un-prefixed protocol names - reserved for IANA standard service names (as per RFC-6335 and https://www.iana.org/assignments/service-names).
-
-* Kubernetes-defined prefixed names:
-* &#39;kubernetes.io/h2c&#39; - HTTP/2 over cleartext as described in https://www.rfc-editor.org/rfc/rfc7540
-
-* Other protocols should use implementation-defined prefixed names such as mycompany.com/my-custom-protocol.||
+|**appProtocol**|str|The application protocol for this port. This is used as a hint for implementations to offer richer behavior for protocols that they understand. This field follows standard Kubernetes label syntax. Valid values are either:&lt;br&gt;&lt;br&gt;* Un-prefixed protocol names - reserved for IANA standard service names (as per RFC-6335 and https://www.iana.org/assignments/service-names).&lt;br&gt;&lt;br&gt;* Kubernetes-defined prefixed names:&lt;br&gt;* &#39;kubernetes.io/h2c&#39; - HTTP/2 over cleartext as described in https://www.rfc-editor.org/rfc/rfc7540&lt;br&gt;&lt;br&gt;* Other protocols should use implementation-defined prefixed names such as mycompany.com/my-custom-protocol.||
 |**name**|str|name represents the name of this port. All ports in an EndpointSlice must have a unique name. If the EndpointSlice is dervied from a Kubernetes service, this corresponds to the Service.ports[].name. Name must either be an empty string or pass DNS_LABEL validation: * must be no more than 63 characters long. * must consist of lower case alphanumeric characters or &#39;-&#39;. * must start and end with an alphanumeric character. Default is empty string.||
 |**port**|int|port represents the port number of the endpoint. If this is not specified, ports are not restricted and must be interpreted in the context of the specific consumer.||
 |**protocol**|str|||
@@ -4883,19 +4424,9 @@ LimitedPriorityLevelConfiguration specifies how to handle requests that are subj
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**assuredConcurrencyShares**|int|`assuredConcurrencyShares` (ACS) configures the execution limit, which is a limit on the number of requests of this priority level that may be exeucting at a given time.  ACS must be a positive number. The server&#39;s concurrency limit (SCL) is divided among the concurrency-controlled priority levels in proportion to their assured concurrency shares. This produces the assured concurrency value (ACV) --- the number of requests that may be executing at a time --- for each such priority level:
-
-ACV(l) = ceil( SCL * ACS(l) / ( sum[priority levels k] ACS(k) ) )
-
-bigger numbers of ACS mean more reserved concurrent requests (at the expense of every other PL). This field has a default value of 30.||
-|**borrowingLimitPercent**|int|`borrowingLimitPercent`, if present, configures a limit on how many seats this priority level can borrow from other priority levels. The limit is known as this level&#39;s BorrowingConcurrencyLimit (BorrowingCL) and is a limit on the total number of seats that this level may borrow at any one time. This field holds the ratio of that limit to the level&#39;s nominal concurrency limit. When this field is non-nil, it must hold a non-negative integer and the limit is calculated as follows.
-
-BorrowingCL(i) = round( NominalCL(i) * borrowingLimitPercent(i)/100.0 )
-
-The value of this field can be more than 100, implying that this priority level can borrow a number of seats that is greater than its own nominal concurrency limit (NominalCL). When this field is left `nil`, the limit is effectively infinite.||
-|**lendablePercent**|int|`lendablePercent` prescribes the fraction of the level&#39;s NominalCL that can be borrowed by other priority levels. The value of this field must be between 0 and 100, inclusive, and it defaults to 0. The number of seats that other levels can borrow from this level, known as this level&#39;s LendableConcurrencyLimit (LendableCL), is defined as follows.
-
-LendableCL(i) = round( NominalCL(i) * lendablePercent(i)/100.0 )||
+|**assuredConcurrencyShares**|int|`assuredConcurrencyShares` (ACS) configures the execution limit, which is a limit on the number of requests of this priority level that may be exeucting at a given time.  ACS must be a positive number. The server&#39;s concurrency limit (SCL) is divided among the concurrency-controlled priority levels in proportion to their assured concurrency shares. This produces the assured concurrency value (ACV) --- the number of requests that may be executing at a time --- for each such priority level:&lt;br&gt;&lt;br&gt;ACV(l) = ceil( SCL * ACS(l) / ( sum[priority levels k] ACS(k) ) )&lt;br&gt;&lt;br&gt;bigger numbers of ACS mean more reserved concurrent requests (at the expense of every other PL). This field has a default value of 30.||
+|**borrowingLimitPercent**|int|`borrowingLimitPercent`, if present, configures a limit on how many seats this priority level can borrow from other priority levels. The limit is known as this level&#39;s BorrowingConcurrencyLimit (BorrowingCL) and is a limit on the total number of seats that this level may borrow at any one time. This field holds the ratio of that limit to the level&#39;s nominal concurrency limit. When this field is non-nil, it must hold a non-negative integer and the limit is calculated as follows.&lt;br&gt;&lt;br&gt;BorrowingCL(i) = round( NominalCL(i) * borrowingLimitPercent(i)/100.0 )&lt;br&gt;&lt;br&gt;The value of this field can be more than 100, implying that this priority level can borrow a number of seats that is greater than its own nominal concurrency limit (NominalCL). When this field is left `nil`, the limit is effectively infinite.||
+|**lendablePercent**|int|`lendablePercent` prescribes the fraction of the level&#39;s NominalCL that can be borrowed by other priority levels. The value of this field must be between 0 and 100, inclusive, and it defaults to 0. The number of seats that other levels can borrow from this level, known as this level&#39;s LendableConcurrencyLimit (LendableCL), is defined as follows.&lt;br&gt;&lt;br&gt;LendableCL(i) = round( NominalCL(i) * lendablePercent(i)/100.0 )||
 |**limitResponse**|[LimitResponse](#limitresponse)|`limitResponse` indicates what to do with requests that can not be executed right now||
 ### NonResourcePolicyRule
 
@@ -4905,13 +4436,7 @@ NonResourcePolicyRule is a predicate that matches non-resource requests accordin
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**nonResourceURLs** `required`|[str]|`nonResourceURLs` is a set of url prefixes that a user should have access to and may not be empty. For example:
-- &#34;/healthz&#34; is legal
-- &#34;/hea*&#34; is illegal
-- &#34;/hea&#34; is legal but matches nothing
-- &#34;/hea/*&#34; also matches nothing
-- &#34;/healthz/*&#34; matches all per-component health checks.
-&#34;*&#34; matches all non-resource urls. if it is present, it must be the only entry. Required.||
+|**nonResourceURLs** `required`|[str]|`nonResourceURLs` is a set of url prefixes that a user should have access to and may not be empty. For example:&lt;br&gt;- &#34;/healthz&#34; is legal&lt;br&gt;- &#34;/hea*&#34; is illegal&lt;br&gt;- &#34;/hea&#34; is legal but matches nothing&lt;br&gt;- &#34;/hea/*&#34; also matches nothing&lt;br&gt;- &#34;/healthz/*&#34; matches all per-component health checks.&lt;br&gt;&#34;*&#34; matches all non-resource urls. if it is present, it must be the only entry. Required.||
 |**verbs** `required`|[str]|`verbs` is a list of matching verbs and may not be empty. &#34;*&#34; matches all verbs. If it is present, it must be the only entry. Required.||
 ### PolicyRulesWithSubjects
 
@@ -5138,20 +4663,10 @@ LimitedPriorityLevelConfiguration specifies how to handle requests that are subj
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**borrowingLimitPercent**|int|`borrowingLimitPercent`, if present, configures a limit on how many seats this priority level can borrow from other priority levels. The limit is known as this level&#39;s BorrowingConcurrencyLimit (BorrowingCL) and is a limit on the total number of seats that this level may borrow at any one time. This field holds the ratio of that limit to the level&#39;s nominal concurrency limit. When this field is non-nil, it must hold a non-negative integer and the limit is calculated as follows.
-
-BorrowingCL(i) = round( NominalCL(i) * borrowingLimitPercent(i)/100.0 )
-
-The value of this field can be more than 100, implying that this priority level can borrow a number of seats that is greater than its own nominal concurrency limit (NominalCL). When this field is left `nil`, the limit is effectively infinite.||
-|**lendablePercent**|int|`lendablePercent` prescribes the fraction of the level&#39;s NominalCL that can be borrowed by other priority levels. The value of this field must be between 0 and 100, inclusive, and it defaults to 0. The number of seats that other levels can borrow from this level, known as this level&#39;s LendableConcurrencyLimit (LendableCL), is defined as follows.
-
-LendableCL(i) = round( NominalCL(i) * lendablePercent(i)/100.0 )||
+|**borrowingLimitPercent**|int|`borrowingLimitPercent`, if present, configures a limit on how many seats this priority level can borrow from other priority levels. The limit is known as this level&#39;s BorrowingConcurrencyLimit (BorrowingCL) and is a limit on the total number of seats that this level may borrow at any one time. This field holds the ratio of that limit to the level&#39;s nominal concurrency limit. When this field is non-nil, it must hold a non-negative integer and the limit is calculated as follows.&lt;br&gt;&lt;br&gt;BorrowingCL(i) = round( NominalCL(i) * borrowingLimitPercent(i)/100.0 )&lt;br&gt;&lt;br&gt;The value of this field can be more than 100, implying that this priority level can borrow a number of seats that is greater than its own nominal concurrency limit (NominalCL). When this field is left `nil`, the limit is effectively infinite.||
+|**lendablePercent**|int|`lendablePercent` prescribes the fraction of the level&#39;s NominalCL that can be borrowed by other priority levels. The value of this field must be between 0 and 100, inclusive, and it defaults to 0. The number of seats that other levels can borrow from this level, known as this level&#39;s LendableConcurrencyLimit (LendableCL), is defined as follows.&lt;br&gt;&lt;br&gt;LendableCL(i) = round( NominalCL(i) * lendablePercent(i)/100.0 )||
 |**limitResponse**|[LimitResponse](#limitresponse)|`limitResponse` indicates what to do with requests that can not be executed right now||
-|**nominalConcurrencyShares**|int|`nominalConcurrencyShares` (NCS) contributes to the computation of the NominalConcurrencyLimit (NominalCL) of this level. This is the number of execution seats available at this priority level. This is used both for requests dispatched from this priority level as well as requests dispatched from other priority levels borrowing seats from this level. The server&#39;s concurrency limit (ServerCL) is divided among the Limited priority levels in proportion to their NCS values:
-
-NominalCL(i)  = ceil( ServerCL * NCS(i) / sum_ncs ) sum_ncs = sum[limited priority level k] NCS(k)
-
-Bigger numbers mean a larger nominal concurrency limit, at the expense of every other Limited priority level. This field has a default value of 30.||
+|**nominalConcurrencyShares**|int|`nominalConcurrencyShares` (NCS) contributes to the computation of the NominalConcurrencyLimit (NominalCL) of this level. This is the number of execution seats available at this priority level. This is used both for requests dispatched from this priority level as well as requests dispatched from other priority levels borrowing seats from this level. The server&#39;s concurrency limit (ServerCL) is divided among the Limited priority levels in proportion to their NCS values:&lt;br&gt;&lt;br&gt;NominalCL(i)  = ceil( ServerCL * NCS(i) / sum_ncs ) sum_ncs = sum[limited priority level k] NCS(k)&lt;br&gt;&lt;br&gt;Bigger numbers mean a larger nominal concurrency limit, at the expense of every other Limited priority level. This field has a default value of 30.||
 ### NonResourcePolicyRule
 
 NonResourcePolicyRule is a predicate that matches non-resource requests according to their verb and the target non-resource URL. A NonResourcePolicyRule matches a request if and only if both (a) at least one member of verbs matches the request and (b) at least one member of nonResourceURLs matches the request.
@@ -5160,13 +4675,7 @@ NonResourcePolicyRule is a predicate that matches non-resource requests accordin
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**nonResourceURLs** `required`|[str]|`nonResourceURLs` is a set of url prefixes that a user should have access to and may not be empty. For example:
-- &#34;/healthz&#34; is legal
-- &#34;/hea*&#34; is illegal
-- &#34;/hea&#34; is legal but matches nothing
-- &#34;/hea/*&#34; also matches nothing
-- &#34;/healthz/*&#34; matches all per-component health checks.
-&#34;*&#34; matches all non-resource urls. if it is present, it must be the only entry. Required.||
+|**nonResourceURLs** `required`|[str]|`nonResourceURLs` is a set of url prefixes that a user should have access to and may not be empty. For example:&lt;br&gt;- &#34;/healthz&#34; is legal&lt;br&gt;- &#34;/hea*&#34; is illegal&lt;br&gt;- &#34;/hea&#34; is legal but matches nothing&lt;br&gt;- &#34;/hea/*&#34; also matches nothing&lt;br&gt;- &#34;/healthz/*&#34; matches all per-component health checks.&lt;br&gt;&#34;*&#34; matches all non-resource urls. if it is present, it must be the only entry. Required.||
 |**verbs** `required`|[str]|`verbs` is a list of matching verbs and may not be empty. &#34;*&#34; matches all verbs. If it is present, it must be the only entry. Required.||
 ### PolicyRulesWithSubjects
 
@@ -5309,17 +4818,7 @@ HTTPIngressPath associates a path with a backend. Incoming urls matching the pat
 | --- | --- | --- | --- |
 |**backend** `required`|[IngressBackend](#ingressbackend)|backend defines the referenced service endpoint to which the traffic will be forwarded to.||
 |**path**|str|path is matched against the path of an incoming request. Currently it can contain characters disallowed from the conventional &#34;path&#34; part of a URL as defined by RFC 3986. Paths must begin with a &#39;/&#39; and must be present when using PathType with value &#34;Exact&#34; or &#34;Prefix&#34;.||
-|**pathType** `required`|str|pathType determines the interpretation of the path matching. PathType can be one of the following values: * Exact: Matches the URL path exactly. * Prefix: Matches based on a URL path prefix split by &#39;/&#39;. Matching is
-done on a path element by element basis. A path element refers is the
-list of labels in the path split by the &#39;/&#39; separator. A request is a
-match for path p if every p is an element-wise prefix of p of the
-request path. Note that if the last element of the path is a substring
-of the last element in request path, it is not a match (e.g. /foo/bar
-matches /foo/bar/baz, but does not match /foo/barbaz).
-* ImplementationSpecific: Interpretation of the Path matching is up to
-the IngressClass. Implementations can treat this as a separate PathType
-or treat it identically to Prefix or Exact path types.
-Implementations are required to support all path types.||
+|**pathType** `required`|str|pathType determines the interpretation of the path matching. PathType can be one of the following values: * Exact: Matches the URL path exactly. * Prefix: Matches based on a URL path prefix split by &#39;/&#39;. Matching is&lt;br&gt;done on a path element by element basis. A path element refers is the&lt;br&gt;list of labels in the path split by the &#39;/&#39; separator. A request is a&lt;br&gt;match for path p if every p is an element-wise prefix of p of the&lt;br&gt;request path. Note that if the last element of the path is a substring&lt;br&gt;of the last element in request path, it is not a match (e.g. /foo/bar&lt;br&gt;matches /foo/bar/baz, but does not match /foo/barbaz).&lt;br&gt;* ImplementationSpecific: Interpretation of the Path matching is up to&lt;br&gt;the IngressClass. Implementations can treat this as a separate PathType&lt;br&gt;or treat it identically to Prefix or Exact path types.&lt;br&gt;Implementations are required to support all path types.||
 ### HTTPIngressRuleValue
 
 HTTPIngressRuleValue is a list of http selectors pointing to backends. In the example: http://&lt;host&gt;/&lt;path&gt;?&lt;searchpart&gt; -&gt; backend where where parts of the url correspond to RFC 3986, this resource will be used to match against everything after the last &#39;/&#39; and before the first &#39;?&#39; or &#39;#&#39;.
@@ -5448,10 +4947,7 @@ IngressPortStatus represents the error condition of a service port
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**error**|str|error is to record the problem with the service port The format of the error shall comply with the following rules: - built-in error values shall be specified in this file and those shall use
-CamelCase names
-- cloud provider specific error values must have names that comply with the
-format foo.example.com/CamelCase.||
+|**error**|str|error is to record the problem with the service port The format of the error shall comply with the following rules: - built-in error values shall be specified in this file and those shall use&lt;br&gt;CamelCase names&lt;br&gt;- cloud provider specific error values must have names that comply with the&lt;br&gt;format foo.example.com/CamelCase.||
 |**port** `required`|int|port is the port number of the ingress port.||
 |**protocol** `required`|str|||
 ### IngressRule
@@ -5462,14 +4958,7 @@ IngressRule represents the rules mapping the paths under a specified host to the
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**host**|str|host is the fully qualified domain name of a network host, as defined by RFC 3986. Note the following deviations from the &#34;host&#34; part of the URI as defined in RFC 3986: 1. IPs are not allowed. Currently an IngressRuleValue can only apply to
-the IP in the Spec of the parent Ingress.
-2. The `:` delimiter is not respected because ports are not allowed.
-Currently the port of an Ingress is implicitly :80 for http and
-:443 for https.
-Both these may change in the future. Incoming requests are matched against the host before the IngressRuleValue. If the host is unspecified, the Ingress routes all traffic based on the specified IngressRuleValue.
-
-host can be &#34;precise&#34; which is a domain name without the terminating dot of a network host (e.g. &#34;foo.bar.com&#34;) or &#34;wildcard&#34;, which is a domain name prefixed with a single wildcard label (e.g. &#34;*.foo.com&#34;). The wildcard character &#39;*&#39; must appear by itself as the first DNS label and matches only a single label. You cannot have a wildcard label by itself (e.g. Host == &#34;*&#34;). Requests will be matched against the Host field in the following way: 1. If host is precise, the request matches this rule if the http host header is equal to Host. 2. If host is a wildcard, then the request matches this rule if the http host header is to equal to the suffix (removing the first label) of the wildcard rule.||
+|**host**|str|host is the fully qualified domain name of a network host, as defined by RFC 3986. Note the following deviations from the &#34;host&#34; part of the URI as defined in RFC 3986: 1. IPs are not allowed. Currently an IngressRuleValue can only apply to&lt;br&gt;the IP in the Spec of the parent Ingress.&lt;br&gt;2. The `:` delimiter is not respected because ports are not allowed.&lt;br&gt;Currently the port of an Ingress is implicitly :80 for http and&lt;br&gt;:443 for https.&lt;br&gt;Both these may change in the future. Incoming requests are matched against the host before the IngressRuleValue. If the host is unspecified, the Ingress routes all traffic based on the specified IngressRuleValue.&lt;br&gt;&lt;br&gt;host can be &#34;precise&#34; which is a domain name without the terminating dot of a network host (e.g. &#34;foo.bar.com&#34;) or &#34;wildcard&#34;, which is a domain name prefixed with a single wildcard label (e.g. &#34;*.foo.com&#34;). The wildcard character &#39;*&#39; must appear by itself as the first DNS label and matches only a single label. You cannot have a wildcard label by itself (e.g. Host == &#34;*&#34;). Requests will be matched against the Host field in the following way: 1. If host is precise, the request matches this rule if the http host header is equal to Host. 2. If host is a wildcard, then the request matches this rule if the http host header is to equal to the suffix (removing the first label) of the wildcard rule.||
 |**http**|[HTTPIngressRuleValue](#httpingressrulevalue)|http||
 ### IngressServiceBackend
 
@@ -5565,12 +5054,8 @@ NetworkPolicyPeer describes a peer to allow traffic to/from. Only certain combin
 | name | type | description | default value |
 | --- | --- | --- | --- |
 |**ipBlock**|[IPBlock](#ipblock)|ipBlock defines policy on a particular IPBlock. If this field is set then neither of the other fields can be.||
-|**namespaceSelector**|[LabelSelector](#labelselector)|namespaceSelector selects namespaces using cluster-scoped labels. This field follows standard label selector semantics; if present but empty, it selects all namespaces.
-
-If podSelector is also set, then the NetworkPolicyPeer as a whole selects the pods matching podSelector in the namespaces selected by namespaceSelector. Otherwise it selects all pods in the namespaces selected by namespaceSelector.||
-|**podSelector**|[LabelSelector](#labelselector)|podSelector is a label selector which selects pods. This field follows standard label selector semantics; if present but empty, it selects all pods.
-
-If namespaceSelector is also set, then the NetworkPolicyPeer as a whole selects the pods matching podSelector in the Namespaces selected by NamespaceSelector. Otherwise it selects the pods matching podSelector in the policy&#39;s own namespace.||
+|**namespaceSelector**|[LabelSelector](#labelselector)|namespaceSelector selects namespaces using cluster-scoped labels. This field follows standard label selector semantics; if present but empty, it selects all namespaces.&lt;br&gt;&lt;br&gt;If podSelector is also set, then the NetworkPolicyPeer as a whole selects the pods matching podSelector in the namespaces selected by namespaceSelector. Otherwise it selects all pods in the namespaces selected by namespaceSelector.||
+|**podSelector**|[LabelSelector](#labelselector)|podSelector is a label selector which selects pods. This field follows standard label selector semantics; if present but empty, it selects all pods.&lt;br&gt;&lt;br&gt;If namespaceSelector is also set, then the NetworkPolicyPeer as a whole selects the pods matching podSelector in the Namespaces selected by NamespaceSelector. Otherwise it selects the pods matching podSelector in the policy&#39;s own namespace.||
 ### NetworkPolicyPort
 
 NetworkPolicyPort describes a port to allow traffic on
@@ -5716,8 +5201,7 @@ RuntimeClass defines a class of container runtime supported in the cluster. The 
 |**handler** `required`|str|handler specifies the underlying runtime and configuration that the CRI implementation will use to handle pods of this class. The possible values are specific to the node &amp; CRI configuration.  It is assumed that all handlers are available on every node, and handlers of the same name are equivalent on every node. For example, a handler called &#34;runc&#34; might specify that the runc OCI runtime (using native Linux containers) will be used to run the containers in a pod. The Handler must be lowercase, conform to the DNS Label (RFC 1123) requirements, and is immutable.||
 |**kind** `required` `readOnly`|"RuntimeClass"|Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds|"RuntimeClass"|
 |**metadata**|[ObjectMeta](#objectmeta)|More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata||
-|**overhead**|[Overhead](#overhead)|overhead represents the resource overhead associated with running a pod for a given RuntimeClass. For more details, see
-https://kubernetes.io/docs/concepts/scheduling-eviction/pod-overhead/||
+|**overhead**|[Overhead](#overhead)|overhead represents the resource overhead associated with running a pod for a given RuntimeClass. For more details, see&lt;br&gt;https://kubernetes.io/docs/concepts/scheduling-eviction/pod-overhead/||
 |**scheduling**|[Scheduling](#scheduling)|scheduling holds the scheduling constraints to ensure that pods running with this RuntimeClass are scheduled to nodes that support it. If scheduling is nil, this RuntimeClass is assumed to be supported by all nodes.||
 ### RuntimeClassList
 
@@ -5788,17 +5272,7 @@ PodDisruptionBudgetSpec is a description of a PodDisruptionBudget.
 |**maxUnavailable**|int \| str|An eviction is allowed if at most &#34;maxUnavailable&#34; pods selected by &#34;selector&#34; are unavailable after the eviction, i.e. even in absence of the evicted pod. For example, one can prevent all voluntary evictions by specifying 0. This is a mutually exclusive setting with &#34;minAvailable&#34;.||
 |**minAvailable**|int \| str|An eviction is allowed if at least &#34;minAvailable&#34; pods selected by &#34;selector&#34; will still be available after the eviction, i.e. even in the absence of the evicted pod.  So for example you can prevent all voluntary evictions by specifying &#34;100%&#34;.||
 |**selector**|[LabelSelector](#labelselector)|Label query over pods whose evictions are managed by the disruption budget. A null selector will match no pods, while an empty ({}) selector will select all pods within the namespace.||
-|**unhealthyPodEvictionPolicy**|str|UnhealthyPodEvictionPolicy defines the criteria for when unhealthy pods should be considered for eviction. Current implementation considers healthy pods, as pods that have status.conditions item with type=&#34;Ready&#34;,status=&#34;True&#34;.
-
-Valid policies are IfHealthyBudget and AlwaysAllow. If no policy is specified, the default behavior will be used, which corresponds to the IfHealthyBudget policy.
-
-IfHealthyBudget policy means that running pods (status.phase=&#34;Running&#34;), but not yet healthy can be evicted only if the guarded application is not disrupted (status.currentHealthy is at least equal to status.desiredHealthy). Healthy pods will be subject to the PDB for eviction.
-
-AlwaysAllow policy means that all running pods (status.phase=&#34;Running&#34;), but not yet healthy are considered disrupted and can be evicted regardless of whether the criteria in a PDB is met. This means perspective running pods of a disrupted application might not get a chance to become healthy. Healthy pods will be subject to the PDB for eviction.
-
-Additional policies may be added in the future. Clients making eviction decisions should disallow eviction of unhealthy pods if they encounter an unrecognized policy in this field.
-
-This field is beta-level. The eviction API uses this field when the feature gate PDBUnhealthyPodEvictionPolicy is enabled (enabled by default).||
+|**unhealthyPodEvictionPolicy**|str|UnhealthyPodEvictionPolicy defines the criteria for when unhealthy pods should be considered for eviction. Current implementation considers healthy pods, as pods that have status.conditions item with type=&#34;Ready&#34;,status=&#34;True&#34;.&lt;br&gt;&lt;br&gt;Valid policies are IfHealthyBudget and AlwaysAllow. If no policy is specified, the default behavior will be used, which corresponds to the IfHealthyBudget policy.&lt;br&gt;&lt;br&gt;IfHealthyBudget policy means that running pods (status.phase=&#34;Running&#34;), but not yet healthy can be evicted only if the guarded application is not disrupted (status.currentHealthy is at least equal to status.desiredHealthy). Healthy pods will be subject to the PDB for eviction.&lt;br&gt;&lt;br&gt;AlwaysAllow policy means that all running pods (status.phase=&#34;Running&#34;), but not yet healthy are considered disrupted and can be evicted regardless of whether the criteria in a PDB is met. This means perspective running pods of a disrupted application might not get a chance to become healthy. Healthy pods will be subject to the PDB for eviction.&lt;br&gt;&lt;br&gt;Additional policies may be added in the future. Clients making eviction decisions should disallow eviction of unhealthy pods if they encounter an unrecognized policy in this field.&lt;br&gt;&lt;br&gt;This field is beta-level. The eviction API uses this field when the feature gate PDBUnhealthyPodEvictionPolicy is enabled (enabled by default).||
 ### PodDisruptionBudgetStatus
 
 PodDisruptionBudgetStatus represents information about the status of a PodDisruptionBudget. Status may trail the actual state of a system.
@@ -5807,15 +5281,7 @@ PodDisruptionBudgetStatus represents information about the status of a PodDisrup
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**conditions**|[[Condition](#condition)]|Conditions contain conditions for PDB. The disruption controller sets the DisruptionAllowed condition. The following are known values for the reason field (additional reasons could be added in the future): - SyncFailed: The controller encountered an error and wasn&#39;t able to compute
-the number of allowed disruptions. Therefore no disruptions are
-allowed and the status of the condition will be False.
-- InsufficientPods: The number of pods are either at or below the number
-required by the PodDisruptionBudget. No disruptions are
-allowed and the status of the condition will be False.
-- SufficientPods: There are more pods than required by the PodDisruptionBudget.
-The condition will be True, and the number of allowed
-disruptions are provided by the disruptionsAllowed property.||
+|**conditions**|[[Condition](#condition)]|Conditions contain conditions for PDB. The disruption controller sets the DisruptionAllowed condition. The following are known values for the reason field (additional reasons could be added in the future): - SyncFailed: The controller encountered an error and wasn&#39;t able to compute&lt;br&gt;the number of allowed disruptions. Therefore no disruptions are&lt;br&gt;allowed and the status of the condition will be False.&lt;br&gt;- InsufficientPods: The number of pods are either at or below the number&lt;br&gt;required by the PodDisruptionBudget. No disruptions are&lt;br&gt;allowed and the status of the condition will be False.&lt;br&gt;- SufficientPods: There are more pods than required by the PodDisruptionBudget.&lt;br&gt;The condition will be True, and the number of allowed&lt;br&gt;disruptions are provided by the disruptionsAllowed property.||
 |**currentHealthy** `required`|int|current number of healthy pods||
 |**desiredHealthy** `required`|int|minimum desired number of healthy pods||
 |**disruptedPods**|{str:str}|DisruptedPods contains information about pods whose eviction was processed by the API server eviction subresource handler but has not yet been observed by the PodDisruptionBudget controller. A pod will be in this map from the time when the API server processed the eviction request to the time when the pod is seen by PDB controller as having been marked for deletion (or after a timeout). The key in the map is the name of the pod and the value is the time when the API server processed the eviction request. If the deletion didn&#39;t occur and a pod is still there it will be removed from the list automatically by PodDisruptionBudget controller after some time. If everything goes smooth this map should be empty for the most of the time. Large number of entries in the map may indicate problems with pod deletions.||
@@ -5974,12 +5440,8 @@ AllocationResult contains attributes of an allocated resource.
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**availableOnNodes**|[NodeSelector](#nodeselector)|This field will get set by the resource driver after it has allocated the resource to inform the scheduler where it can schedule Pods using the ResourceClaim.
-
-Setting this field is optional. If null, the resource is available everywhere.||
-|**resourceHandles**|[[ResourceHandle](#resourcehandle)]|ResourceHandles contain the state associated with an allocation that should be maintained throughout the lifetime of a claim. Each ResourceHandle contains data that should be passed to a specific kubelet plugin once it lands on a node. This data is returned by the driver after a successful allocation and is opaque to Kubernetes. Driver documentation may explain to users how to interpret this data if needed.
-
-Setting this field is optional. It has a maximum size of 32 entries. If null (or empty), it is assumed this allocation will be processed by a single kubelet plugin with no ResourceHandle data attached. The name of the kubelet plugin invoked will match the DriverName set in the ResourceClaimStatus this AllocationResult is embedded in.||
+|**availableOnNodes**|[NodeSelector](#nodeselector)|This field will get set by the resource driver after it has allocated the resource to inform the scheduler where it can schedule Pods using the ResourceClaim.&lt;br&gt;&lt;br&gt;Setting this field is optional. If null, the resource is available everywhere.||
+|**resourceHandles**|[[ResourceHandle](#resourcehandle)]|ResourceHandles contain the state associated with an allocation that should be maintained throughout the lifetime of a claim. Each ResourceHandle contains data that should be passed to a specific kubelet plugin once it lands on a node. This data is returned by the driver after a successful allocation and is opaque to Kubernetes. Driver documentation may explain to users how to interpret this data if needed.&lt;br&gt;&lt;br&gt;Setting this field is optional. It has a maximum size of 32 entries. If null (or empty), it is assumed this allocation will be processed by a single kubelet plugin with no ResourceHandle data attached. The name of the kubelet plugin invoked will match the DriverName set in the ResourceClaimStatus this AllocationResult is embedded in.||
 |**shareable**|bool|Shareable determines whether the resource supports more than one consumer at a time.||
 ### PodSchedulingContext
 
@@ -6013,9 +5475,7 @@ PodSchedulingContextSpec describes where resources for the Pod are needed.
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**potentialNodes**|[str]|PotentialNodes lists nodes where the Pod might be able to run.
-
-The size of this field is limited to 128. This is large enough for many clusters. Larger clusters may need more attempts to find a node that suits all pending resources. This may get increased in the future, but not reduced.||
+|**potentialNodes**|[str]|PotentialNodes lists nodes where the Pod might be able to run.&lt;br&gt;&lt;br&gt;The size of this field is limited to 128. This is large enough for many clusters. Larger clusters may need more attempts to find a node that suits all pending resources. This may get increased in the future, but not reduced.||
 |**selectedNode**|str|SelectedNode is the node for which allocation of ResourceClaims that are referenced by the Pod and that use &#34;WaitForFirstConsumer&#34; allocation is to be attempted.||
 ### PodSchedulingContextStatus
 
@@ -6082,9 +5542,7 @@ ResourceClaimSchedulingStatus contains information about one particular Resource
 | name | type | description | default value |
 | --- | --- | --- | --- |
 |**name**|str|Name matches the pod.spec.resourceClaims[*].Name field.||
-|**unsuitableNodes**|[str]|UnsuitableNodes lists nodes that the ResourceClaim cannot be allocated for.
-
-The size of this field is limited to 128, the same as for PodSchedulingSpec.PotentialNodes. This may get increased in the future, but not reduced.||
+|**unsuitableNodes**|[str]|UnsuitableNodes lists nodes that the ResourceClaim cannot be allocated for.&lt;br&gt;&lt;br&gt;The size of this field is limited to 128, the same as for PodSchedulingSpec.PotentialNodes. This may get increased in the future, but not reduced.||
 ### ResourceClaimSpec
 
 ResourceClaimSpec defines how a resource is to be allocated.
@@ -6094,9 +5552,7 @@ ResourceClaimSpec defines how a resource is to be allocated.
 | name | type | description | default value |
 | --- | --- | --- | --- |
 |**allocationMode**|str|Allocation can start immediately or when a Pod wants to use the resource. &#34;WaitForFirstConsumer&#34; is the default.||
-|**parametersRef**|[ResourceClaimParametersReference](#resourceclaimparametersreference)|ParametersRef references a separate object with arbitrary parameters that will be used by the driver when allocating a resource for the claim.
-
-The object must be in the same namespace as the ResourceClaim.||
+|**parametersRef**|[ResourceClaimParametersReference](#resourceclaimparametersreference)|ParametersRef references a separate object with arbitrary parameters that will be used by the driver when allocating a resource for the claim.&lt;br&gt;&lt;br&gt;The object must be in the same namespace as the ResourceClaim.||
 |**resourceClassName** `required`|str|ResourceClassName references the driver and additional parameters via the name of a ResourceClass that was created as part of the driver deployment.||
 ### ResourceClaimStatus
 
@@ -6107,15 +5563,9 @@ ResourceClaimStatus tracks whether the resource has been allocated and what the 
 | name | type | description | default value |
 | --- | --- | --- | --- |
 |**allocation**|[AllocationResult](#allocationresult)|Allocation is set by the resource driver once a resource or set of resources has been allocated successfully. If this is not specified, the resources have not been allocated yet.||
-|**deallocationRequested**|bool|DeallocationRequested indicates that a ResourceClaim is to be deallocated.
-
-The driver then must deallocate this claim and reset the field together with clearing the Allocation field.
-
-While DeallocationRequested is set, no new consumers may be added to ReservedFor.||
+|**deallocationRequested**|bool|DeallocationRequested indicates that a ResourceClaim is to be deallocated.&lt;br&gt;&lt;br&gt;The driver then must deallocate this claim and reset the field together with clearing the Allocation field.&lt;br&gt;&lt;br&gt;While DeallocationRequested is set, no new consumers may be added to ReservedFor.||
 |**driverName**|str|DriverName is a copy of the driver name from the ResourceClass at the time when allocation started.||
-|**reservedFor**|[[ResourceClaimConsumerReference](#resourceclaimconsumerreference)]|ReservedFor indicates which entities are currently allowed to use the claim. A Pod which references a ResourceClaim which is not reserved for that Pod will not be started.
-
-There can be at most 32 such reservations. This may get increased in the future, but not reduced.||
+|**reservedFor**|[[ResourceClaimConsumerReference](#resourceclaimconsumerreference)]|ReservedFor indicates which entities are currently allowed to use the claim. A Pod which references a ResourceClaim which is not reserved for that Pod will not be started.&lt;br&gt;&lt;br&gt;There can be at most 32 such reservations. This may get increased in the future, but not reduced.||
 ### ResourceClaimTemplate
 
 ResourceClaimTemplate is used to produce ResourceClaim objects.
@@ -6127,9 +5577,7 @@ ResourceClaimTemplate is used to produce ResourceClaim objects.
 |**apiVersion** `required` `readOnly`|"resource.k8s.io/v1alpha2"|APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources|"resource.k8s.io/v1alpha2"|
 |**kind** `required` `readOnly`|"ResourceClaimTemplate"|Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds|"ResourceClaimTemplate"|
 |**metadata**|[ObjectMeta](#objectmeta)|Standard object metadata||
-|**spec** `required`|[ResourceClaimTemplateSpec](#resourceclaimtemplatespec)|Describes the ResourceClaim that is to be generated.
-
-This field is immutable. A ResourceClaim will get created by the control plane for a Pod when needed and then not get updated anymore.||
+|**spec** `required`|[ResourceClaimTemplateSpec](#resourceclaimtemplatespec)|Describes the ResourceClaim that is to be generated.&lt;br&gt;&lt;br&gt;This field is immutable. A ResourceClaim will get created by the control plane for a Pod when needed and then not get updated anymore.||
 ### ResourceClaimTemplateList
 
 ResourceClaimTemplateList is a collection of claim templates.
@@ -6161,15 +5609,11 @@ ResourceClass is used by administrators to influence how resources are allocated
 | name | type | description | default value |
 | --- | --- | --- | --- |
 |**apiVersion** `required` `readOnly`|"resource.k8s.io/v1alpha2"|APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources|"resource.k8s.io/v1alpha2"|
-|**driverName** `required`|str|DriverName defines the name of the dynamic resource driver that is used for allocation of a ResourceClaim that uses this class.
-
-Resource drivers have a unique name in forward domain order (acme.example.com).||
+|**driverName** `required`|str|DriverName defines the name of the dynamic resource driver that is used for allocation of a ResourceClaim that uses this class.&lt;br&gt;&lt;br&gt;Resource drivers have a unique name in forward domain order (acme.example.com).||
 |**kind** `required` `readOnly`|"ResourceClass"|Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds|"ResourceClass"|
 |**metadata**|[ObjectMeta](#objectmeta)|Standard object metadata||
 |**parametersRef**|[ResourceClassParametersReference](#resourceclassparametersreference)|ParametersRef references an arbitrary separate object that may hold parameters that will be used by the driver when allocating a resource that uses this class. A dynamic resource driver can distinguish between parameters stored here and and those stored in ResourceClaimSpec.||
-|**suitableNodes**|[NodeSelector](#nodeselector)|Only nodes matching the selector will be considered by the scheduler when trying to find a Node that fits a Pod when that Pod uses a ResourceClaim that has not been allocated yet.
-
-Setting this field is optional. If null, all nodes are candidates.||
+|**suitableNodes**|[NodeSelector](#nodeselector)|Only nodes matching the selector will be considered by the scheduler when trying to find a Node that fits a Pod when that Pod uses a ResourceClaim that has not been allocated yet.&lt;br&gt;&lt;br&gt;Setting this field is optional. If null, all nodes are candidates.||
 ### ResourceClassList
 
 ResourceClassList is a collection of classes.
@@ -6202,9 +5646,7 @@ ResourceHandle holds opaque resource data for processing by a specific kubelet p
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**data**|str|Data contains the opaque data associated with this ResourceHandle. It is set by the controller component of the resource driver whose name matches the DriverName set in the ResourceClaimStatus this ResourceHandle is embedded in. It is set at allocation time and is intended for processing by the kubelet plugin whose name matches the DriverName set in this ResourceHandle.
-
-The maximum size of this field is 16KiB. This may get increased in the future, but not reduced.||
+|**data**|str|Data contains the opaque data associated with this ResourceHandle. It is set by the controller component of the resource driver whose name matches the DriverName set in the ResourceClaimStatus this ResourceHandle is embedded in. It is set at allocation time and is intended for processing by the kubelet plugin whose name matches the DriverName set in this ResourceHandle.&lt;br&gt;&lt;br&gt;The maximum size of this field is 16KiB. This may get increased in the future, but not reduced.||
 |**driverName**|str|DriverName specifies the name of the resource driver whose kubelet plugin should be invoked to process this ResourceHandle&#39;s data once it lands on a node. This may differ from the DriverName set in ResourceClaimStatus this ResourceHandle is embedded in.||
 ### PriorityClass
 
@@ -6265,57 +5707,14 @@ CSIDriverSpec is the specification of a CSIDriver.
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**attachRequired**|bool|attachRequired indicates this CSI volume driver requires an attach operation (because it implements the CSI ControllerPublishVolume() method), and that the Kubernetes attach detach controller should call the attach volume interface which checks the volumeattachment status and waits until the volume is attached before proceeding to mounting. The CSI external-attacher coordinates with CSI volume driver and updates the volumeattachment status when the attach operation is complete. If the CSIDriverRegistry feature gate is enabled and the value is specified to false, the attach operation will be skipped. Otherwise the attach operation will be called.
-
-This field is immutable.||
-|**fsGroupPolicy**|str|fsGroupPolicy defines if the underlying volume supports changing ownership and permission of the volume before being mounted. Refer to the specific FSGroupPolicy values for additional details.
-
-This field is immutable.
-
-Defaults to ReadWriteOnceWithFSType, which will examine each volume to determine if Kubernetes should modify ownership and permissions of the volume. With the default policy the defined fsGroup will only be applied if a fstype is defined and the volume&#39;s access mode contains ReadWriteOnce.||
-|**podInfoOnMount**|bool|podInfoOnMount indicates this CSI volume driver requires additional pod information (like podName, podUID, etc.) during mount operations, if set to true. If set to false, pod information will not be passed on mount. Default is false.
-
-The CSI driver specifies podInfoOnMount as part of driver deployment. If true, Kubelet will pass pod information as VolumeContext in the CSI NodePublishVolume() calls. The CSI driver is responsible for parsing and validating the information passed in as VolumeContext.
-
-The following VolumeConext will be passed if podInfoOnMount is set to true. This list might grow, but the prefix will be used. &#34;csi.storage.k8s.io/pod.name&#34;: pod.Name &#34;csi.storage.k8s.io/pod.namespace&#34;: pod.Namespace &#34;csi.storage.k8s.io/pod.uid&#34;: string(pod.UID) &#34;csi.storage.k8s.io/ephemeral&#34;: &#34;true&#34; if the volume is an ephemeral inline volume
-defined by a CSIVolumeSource, otherwise &#34;false&#34;
-
-&#34;csi.storage.k8s.io/ephemeral&#34; is a new feature in Kubernetes 1.16. It is only required for drivers which support both the &#34;Persistent&#34; and &#34;Ephemeral&#34; VolumeLifecycleMode. Other drivers can leave pod info disabled and/or ignore this field. As Kubernetes 1.15 doesn&#39;t support this field, drivers can only support one mode when deployed on such a cluster and the deployment determines which mode that is, for example via a command line parameter of the driver.
-
-This field is immutable.||
-|**requiresRepublish**|bool|requiresRepublish indicates the CSI driver wants `NodePublishVolume` being periodically called to reflect any possible change in the mounted volume. This field defaults to false.
-
-Note: After a successful initial NodePublishVolume call, subsequent calls to NodePublishVolume should only update the contents of the volume. New mount points will not be seen by a running container.||
-|**seLinuxMount**|bool|seLinuxMount specifies if the CSI driver supports &#34;-o context&#34; mount option.
-
-When &#34;true&#34;, the CSI driver must ensure that all volumes provided by this CSI driver can be mounted separately with different `-o context` options. This is typical for storage backends that provide volumes as filesystems on block devices or as independent shared volumes. Kubernetes will call NodeStage / NodePublish with &#34;-o context=xyz&#34; mount option when mounting a ReadWriteOncePod volume used in Pod that has explicitly set SELinux context. In the future, it may be expanded to other volume AccessModes. In any case, Kubernetes will ensure that the volume is mounted only with a single SELinux context.
-
-When &#34;false&#34;, Kubernetes won&#39;t pass any special SELinux mount options to the driver. This is typical for volumes that represent subdirectories of a bigger shared filesystem.
-
-Default is &#34;false&#34;.||
-|**storageCapacity**|bool|storageCapacity indicates that the CSI volume driver wants pod scheduling to consider the storage capacity that the driver deployment will report by creating CSIStorageCapacity objects with capacity information, if set to true.
-
-The check can be enabled immediately when deploying a driver. In that case, provisioning new volumes with late binding will pause until the driver deployment has published some suitable CSIStorageCapacity object.
-
-Alternatively, the driver can be deployed with the field unset or false and it can be flipped later when storage capacity information has been published.
-
-This field was immutable in Kubernetes &lt;= 1.22 and now is mutable.||
-|**tokenRequests**|[[TokenRequest](#tokenrequest)]|tokenRequests indicates the CSI driver needs pods&#39; service account tokens it is mounting volume for to do necessary authentication. Kubelet will pass the tokens in VolumeContext in the CSI NodePublishVolume calls. The CSI driver should parse and validate the following VolumeContext: &#34;csi.storage.k8s.io/serviceAccount.tokens&#34;: {
-&#34;&lt;audience&gt;&#34;: {
-&#34;token&#34;: &lt;token&gt;,
-&#34;expirationTimestamp&#34;: &lt;expiration timestamp in RFC3339&gt;,
-},
-...
-}
-
-Note: Audience in each TokenRequest should be different and at most one token is empty string. To receive a new token after expiry, RequiresRepublish can be used to trigger NodePublishVolume periodically.||
-|**volumeLifecycleModes**|[str]|volumeLifecycleModes defines what kind of volumes this CSI volume driver supports. The default if the list is empty is &#34;Persistent&#34;, which is the usage defined by the CSI specification and implemented in Kubernetes via the usual PV/PVC mechanism.
-
-The other mode is &#34;Ephemeral&#34;. In this mode, volumes are defined inline inside the pod spec with CSIVolumeSource and their lifecycle is tied to the lifecycle of that pod. A driver has to be aware of this because it is only going to get a NodePublishVolume call for such a volume.
-
-For more information about implementing this mode, see https://kubernetes-csi.github.io/docs/ephemeral-local-volumes.html A driver can support one or more of these modes and more modes may be added in the future.
-
-This field is beta. This field is immutable.||
+|**attachRequired**|bool|attachRequired indicates this CSI volume driver requires an attach operation (because it implements the CSI ControllerPublishVolume() method), and that the Kubernetes attach detach controller should call the attach volume interface which checks the volumeattachment status and waits until the volume is attached before proceeding to mounting. The CSI external-attacher coordinates with CSI volume driver and updates the volumeattachment status when the attach operation is complete. If the CSIDriverRegistry feature gate is enabled and the value is specified to false, the attach operation will be skipped. Otherwise the attach operation will be called.&lt;br&gt;&lt;br&gt;This field is immutable.||
+|**fsGroupPolicy**|str|fsGroupPolicy defines if the underlying volume supports changing ownership and permission of the volume before being mounted. Refer to the specific FSGroupPolicy values for additional details.&lt;br&gt;&lt;br&gt;This field is immutable.&lt;br&gt;&lt;br&gt;Defaults to ReadWriteOnceWithFSType, which will examine each volume to determine if Kubernetes should modify ownership and permissions of the volume. With the default policy the defined fsGroup will only be applied if a fstype is defined and the volume&#39;s access mode contains ReadWriteOnce.||
+|**podInfoOnMount**|bool|podInfoOnMount indicates this CSI volume driver requires additional pod information (like podName, podUID, etc.) during mount operations, if set to true. If set to false, pod information will not be passed on mount. Default is false.&lt;br&gt;&lt;br&gt;The CSI driver specifies podInfoOnMount as part of driver deployment. If true, Kubelet will pass pod information as VolumeContext in the CSI NodePublishVolume() calls. The CSI driver is responsible for parsing and validating the information passed in as VolumeContext.&lt;br&gt;&lt;br&gt;The following VolumeConext will be passed if podInfoOnMount is set to true. This list might grow, but the prefix will be used. &#34;csi.storage.k8s.io/pod.name&#34;: pod.Name &#34;csi.storage.k8s.io/pod.namespace&#34;: pod.Namespace &#34;csi.storage.k8s.io/pod.uid&#34;: string(pod.UID) &#34;csi.storage.k8s.io/ephemeral&#34;: &#34;true&#34; if the volume is an ephemeral inline volume&lt;br&gt;defined by a CSIVolumeSource, otherwise &#34;false&#34;&lt;br&gt;&lt;br&gt;&#34;csi.storage.k8s.io/ephemeral&#34; is a new feature in Kubernetes 1.16. It is only required for drivers which support both the &#34;Persistent&#34; and &#34;Ephemeral&#34; VolumeLifecycleMode. Other drivers can leave pod info disabled and/or ignore this field. As Kubernetes 1.15 doesn&#39;t support this field, drivers can only support one mode when deployed on such a cluster and the deployment determines which mode that is, for example via a command line parameter of the driver.&lt;br&gt;&lt;br&gt;This field is immutable.||
+|**requiresRepublish**|bool|requiresRepublish indicates the CSI driver wants `NodePublishVolume` being periodically called to reflect any possible change in the mounted volume. This field defaults to false.&lt;br&gt;&lt;br&gt;Note: After a successful initial NodePublishVolume call, subsequent calls to NodePublishVolume should only update the contents of the volume. New mount points will not be seen by a running container.||
+|**seLinuxMount**|bool|seLinuxMount specifies if the CSI driver supports &#34;-o context&#34; mount option.&lt;br&gt;&lt;br&gt;When &#34;true&#34;, the CSI driver must ensure that all volumes provided by this CSI driver can be mounted separately with different `-o context` options. This is typical for storage backends that provide volumes as filesystems on block devices or as independent shared volumes. Kubernetes will call NodeStage / NodePublish with &#34;-o context=xyz&#34; mount option when mounting a ReadWriteOncePod volume used in Pod that has explicitly set SELinux context. In the future, it may be expanded to other volume AccessModes. In any case, Kubernetes will ensure that the volume is mounted only with a single SELinux context.&lt;br&gt;&lt;br&gt;When &#34;false&#34;, Kubernetes won&#39;t pass any special SELinux mount options to the driver. This is typical for volumes that represent subdirectories of a bigger shared filesystem.&lt;br&gt;&lt;br&gt;Default is &#34;false&#34;.||
+|**storageCapacity**|bool|storageCapacity indicates that the CSI volume driver wants pod scheduling to consider the storage capacity that the driver deployment will report by creating CSIStorageCapacity objects with capacity information, if set to true.&lt;br&gt;&lt;br&gt;The check can be enabled immediately when deploying a driver. In that case, provisioning new volumes with late binding will pause until the driver deployment has published some suitable CSIStorageCapacity object.&lt;br&gt;&lt;br&gt;Alternatively, the driver can be deployed with the field unset or false and it can be flipped later when storage capacity information has been published.&lt;br&gt;&lt;br&gt;This field was immutable in Kubernetes &lt;= 1.22 and now is mutable.||
+|**tokenRequests**|[[TokenRequest](#tokenrequest)]|tokenRequests indicates the CSI driver needs pods&#39; service account tokens it is mounting volume for to do necessary authentication. Kubelet will pass the tokens in VolumeContext in the CSI NodePublishVolume calls. The CSI driver should parse and validate the following VolumeContext: &#34;csi.storage.k8s.io/serviceAccount.tokens&#34;: {&lt;br&gt;&#34;&lt;audience&gt;&#34;: {&lt;br&gt;&#34;token&#34;: &lt;token&gt;,&lt;br&gt;&#34;expirationTimestamp&#34;: &lt;expiration timestamp in RFC3339&gt;,&lt;br&gt;},&lt;br&gt;...&lt;br&gt;}&lt;br&gt;&lt;br&gt;Note: Audience in each TokenRequest should be different and at most one token is empty string. To receive a new token after expiry, RequiresRepublish can be used to trigger NodePublishVolume periodically.||
+|**volumeLifecycleModes**|[str]|volumeLifecycleModes defines what kind of volumes this CSI volume driver supports. The default if the list is empty is &#34;Persistent&#34;, which is the usage defined by the CSI specification and implemented in Kubernetes via the usual PV/PVC mechanism.&lt;br&gt;&lt;br&gt;The other mode is &#34;Ephemeral&#34;. In this mode, volumes are defined inline inside the pod spec with CSIVolumeSource and their lifecycle is tied to the lifecycle of that pod. A driver has to be aware of this because it is only going to get a NodePublishVolume call for such a volume.&lt;br&gt;&lt;br&gt;For more information about implementing this mode, see https://kubernetes-csi.github.io/docs/ephemeral-local-volumes.html A driver can support one or more of these modes and more modes may be added in the future.&lt;br&gt;&lt;br&gt;This field is beta. This field is immutable.||
 ### CSINode
 
 CSINode holds information about all CSI drivers installed on a node. CSI drivers do not need to create the CSINode object directly. As long as they use the node-driver-registrar sidecar container, the kubelet will automatically populate the CSINode object for the CSI driver as part of kubelet plugin registration. CSINode has the same name as a node. If the object is missing, it means either there are no CSI Drivers available on the node, or the Kubelet version is low enough that it doesn&#39;t create this object. CSINode has an OwnerReference that points to the corresponding node object.
@@ -6370,18 +5769,10 @@ CSIStorageCapacity stores the result of one CSI GetCapacity call. For a given St
 | name | type | description | default value |
 | --- | --- | --- | --- |
 |**apiVersion** `required` `readOnly`|"storage.k8s.io/v1"|APIVersion defines the versioned schema of this representation of an object. Servers should convert recognized schemas to the latest internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources|"storage.k8s.io/v1"|
-|**capacity**|str|capacity is the value reported by the CSI driver in its GetCapacityResponse for a GetCapacityRequest with topology and parameters that match the previous fields.
-
-The semantic is currently (CSI spec 1.2) defined as: The available capacity, in bytes, of the storage that can be used to provision volumes. If not set, that information is currently unavailable.||
+|**capacity**|str|capacity is the value reported by the CSI driver in its GetCapacityResponse for a GetCapacityRequest with topology and parameters that match the previous fields.&lt;br&gt;&lt;br&gt;The semantic is currently (CSI spec 1.2) defined as: The available capacity, in bytes, of the storage that can be used to provision volumes. If not set, that information is currently unavailable.||
 |**kind** `required` `readOnly`|"CSIStorageCapacity"|Kind is a string value representing the REST resource this object represents. Servers may infer this from the endpoint the client submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds|"CSIStorageCapacity"|
-|**maximumVolumeSize**|str|maximumVolumeSize is the value reported by the CSI driver in its GetCapacityResponse for a GetCapacityRequest with topology and parameters that match the previous fields.
-
-This is defined since CSI spec 1.4.0 as the largest size that may be used in a CreateVolumeRequest.capacity_range.required_bytes field to create a volume with the same parameters as those in GetCapacityRequest. The corresponding value in the Kubernetes API is ResourceRequirements.Requests in a volume claim.||
-|**metadata**|[ObjectMeta](#objectmeta)|Standard object&#39;s metadata. The name has no particular meaning. It must be a DNS subdomain (dots allowed, 253 characters). To ensure that there are no conflicts with other CSI drivers on the cluster, the recommendation is to use csisc-&lt;uuid&gt;, a generated name, or a reverse-domain name which ends with the unique CSI driver name.
-
-Objects are namespaced.
-
-More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata||
+|**maximumVolumeSize**|str|maximumVolumeSize is the value reported by the CSI driver in its GetCapacityResponse for a GetCapacityRequest with topology and parameters that match the previous fields.&lt;br&gt;&lt;br&gt;This is defined since CSI spec 1.4.0 as the largest size that may be used in a CreateVolumeRequest.capacity_range.required_bytes field to create a volume with the same parameters as those in GetCapacityRequest. The corresponding value in the Kubernetes API is ResourceRequirements.Requests in a volume claim.||
+|**metadata**|[ObjectMeta](#objectmeta)|Standard object&#39;s metadata. The name has no particular meaning. It must be a DNS subdomain (dots allowed, 253 characters). To ensure that there are no conflicts with other CSI drivers on the cluster, the recommendation is to use csisc-&lt;uuid&gt;, a generated name, or a reverse-domain name which ends with the unique CSI driver name.&lt;br&gt;&lt;br&gt;Objects are namespaced.&lt;br&gt;&lt;br&gt;More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata||
 |**nodeTopology**|[LabelSelector](#labelselector)|nodeTopology defines which nodes have access to the storage for which capacity was reported. If not set, the storage is not accessible from any node in the cluster. If empty, the storage is accessible from all nodes. This field is immutable.||
 |**storageClassName** `required`|str|storageClassName represents the name of the StorageClass that the reported capacity applies to. It must meet the same requirements as the name of a StorageClass object (non-empty, DNS subdomain). If that object no longer exists, the CSIStorageCapacity object is obsolete and should be removed by its creator. This field is immutable.||
 ### CSIStorageCapacityList
@@ -6534,8 +5925,7 @@ CustomResourceConversion describes how to convert different versions of a CR.
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**strategy** `required`|str|strategy specifies how custom resources are converted between versions. Allowed values are: - `&#34;None&#34;`: The converter only change the apiVersion and would not touch any other field in the custom resource. - `&#34;Webhook&#34;`: API Server will call to an external webhook to do the conversion. Additional information
-is needed for this option. This requires spec.preserveUnknownFields to be false, and spec.conversion.webhook to be set.||
+|**strategy** `required`|str|strategy specifies how custom resources are converted between versions. Allowed values are: - `&#34;None&#34;`: The converter only change the apiVersion and would not touch any other field in the custom resource. - `&#34;Webhook&#34;`: API Server will call to an external webhook to do the conversion. Additional information&lt;br&gt;is needed for this option. This requires spec.preserveUnknownFields to be false, and spec.conversion.webhook to be set.||
 |**webhook**|[WebhookConversion](#webhookconversion)|webhook describes how to call the conversion webhook. Required when `strategy` is set to `&#34;Webhook&#34;`.||
 ### CustomResourceDefinition
 
@@ -6690,9 +6080,7 @@ JSONSchemaProps is a JSON-Schema following Specification Draft 4 (http://json-sc
 |**exclusiveMaximum**|bool|exclusive maximum||
 |**exclusiveMinimum**|bool|exclusive minimum||
 |**externalDocs**|[ExternalDocumentation](#externaldocumentation)|external docs||
-|**format**|str|format is an OpenAPI v3 format string. Unknown formats are ignored. The following formats are validated:
-
-- bsonobjectid: a bson object ID, i.e. a 24 characters hex string - uri: an URI as parsed by Golang net/url.ParseRequestURI - email: an email address as parsed by Golang net/mail.ParseAddress - hostname: a valid representation for an Internet host name, as defined by RFC 1034, section 3.1 [RFC1034]. - ipv4: an IPv4 IP as parsed by Golang net.ParseIP - ipv6: an IPv6 IP as parsed by Golang net.ParseIP - cidr: a CIDR as parsed by Golang net.ParseCIDR - mac: a MAC address as parsed by Golang net.ParseMAC - uuid: an UUID that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$ - uuid3: an UUID3 that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?3[0-9a-f]{3}-?[0-9a-f]{4}-?[0-9a-f]{12}$ - uuid4: an UUID4 that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?4[0-9a-f]{3}-?[89ab][0-9a-f]{3}-?[0-9a-f]{12}$ - uuid5: an UUID5 that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?5[0-9a-f]{3}-?[89ab][0-9a-f]{3}-?[0-9a-f]{12}$ - isbn: an ISBN10 or ISBN13 number string like &#34;0321751043&#34; or &#34;978-0321751041&#34; - isbn10: an ISBN10 number string like &#34;0321751043&#34; - isbn13: an ISBN13 number string like &#34;978-0321751041&#34; - creditcard: a credit card number defined by the regex ^(?:4[0-9]{12}(?:[0-9]{3})?|5[1-5][0-9]{14}|6(?:011|5[0-9][0-9])[0-9]{12}|3[47][0-9]{13}|3(?:0[0-5]|[68][0-9])[0-9]{11}|(?:2131|1800|35\d{3})\d{11})$ with any non digit characters mixed in - ssn: a U.S. social security number following the regex ^\d{3}[- ]?\d{2}[- ]?\d{4}$ - hexcolor: an hexadecimal color code like &#34;#FFFFFF: following the regex ^#?([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$ - rgbcolor: an RGB color code like rgb like &#34;rgb(255,255,2559&#34; - byte: base64 encoded binary data - password: any kind of string - date: a date string like &#34;2006-01-02&#34; as defined by full-date in RFC3339 - duration: a duration string like &#34;22 ns&#34; as parsed by Golang time.ParseDuration or compatible with Scala duration format - datetime: a date time string like &#34;2014-12-15T19:30:20.000Z&#34; as defined by date-time in RFC3339.||
+|**format**|str|format is an OpenAPI v3 format string. Unknown formats are ignored. The following formats are validated:&lt;br&gt;&lt;br&gt;- bsonobjectid: a bson object ID, i.e. a 24 characters hex string - uri: an URI as parsed by Golang net/url.ParseRequestURI - email: an email address as parsed by Golang net/mail.ParseAddress - hostname: a valid representation for an Internet host name, as defined by RFC 1034, section 3.1 [RFC1034]. - ipv4: an IPv4 IP as parsed by Golang net.ParseIP - ipv6: an IPv6 IP as parsed by Golang net.ParseIP - cidr: a CIDR as parsed by Golang net.ParseCIDR - mac: a MAC address as parsed by Golang net.ParseMAC - uuid: an UUID that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$ - uuid3: an UUID3 that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?3[0-9a-f]{3}-?[0-9a-f]{4}-?[0-9a-f]{12}$ - uuid4: an UUID4 that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?4[0-9a-f]{3}-?[89ab][0-9a-f]{3}-?[0-9a-f]{12}$ - uuid5: an UUID5 that allows uppercase defined by the regex (?i)^[0-9a-f]{8}-?[0-9a-f]{4}-?5[0-9a-f]{3}-?[89ab][0-9a-f]{3}-?[0-9a-f]{12}$ - isbn: an ISBN10 or ISBN13 number string like &#34;0321751043&#34; or &#34;978-0321751041&#34; - isbn10: an ISBN10 number string like &#34;0321751043&#34; - isbn13: an ISBN13 number string like &#34;978-0321751041&#34; - creditcard: a credit card number defined by the regex ^(?:4[0-9]{12}(?:[0-9]{3})?\|5[1-5][0-9]{14}\|6(?:011\|5[0-9][0-9])[0-9]{12}\|3[47][0-9]{13}\|3(?:0[0-5]\|[68][0-9])[0-9]{11}\|(?:2131\|1800\|35\d{3})\d{11})$ with any non digit characters mixed in - ssn: a U.S. social security number following the regex ^\d{3}[- ]?\d{2}[- ]?\d{4}$ - hexcolor: an hexadecimal color code like &#34;#FFFFFF: following the regex ^#?([0-9a-fA-F]{3}\|[0-9a-fA-F]{6})$ - rgbcolor: an RGB color code like rgb like &#34;rgb(255,255,2559&#34; - byte: base64 encoded binary data - password: any kind of string - date: a date string like &#34;2006-01-02&#34; as defined by full-date in RFC3339 - duration: a duration string like &#34;22 ns&#34; as parsed by Golang time.ParseDuration or compatible with Scala duration format - datetime: a date time string like &#34;2014-12-15T19:30:20.000Z&#34; as defined by date-time in RFC3339.||
 |**id**|str|id||
 |**items**|any|JSONSchemaPropsOrArray represents a value that can either be a JSONSchemaProps or an array of JSONSchemaProps. Mainly here for serialization purposes.||
 |**maxItems**|int|max items||
@@ -6717,43 +6105,10 @@ JSONSchemaProps is a JSON-Schema following Specification Draft 4 (http://json-sc
 |**type**|str|||
 |**uniqueItems**|bool|unique items||
 |**x_kubernetes_embedded_resource**|bool|x-kubernetes-embedded-resource defines that the value is an embedded Kubernetes runtime.Object, with TypeMeta and ObjectMeta. The type must be object. It is allowed to further restrict the embedded object. kind, apiVersion and metadata are validated automatically. x-kubernetes-preserve-unknown-fields is allowed to be true, but does not have to be if the object is fully specified (up to kind, apiVersion, metadata).||
-|**x_kubernetes_int_or_string**|bool|x-kubernetes-int-or-string specifies that this value is either an integer or a string. If this is true, an empty type is allowed and type as child of anyOf is permitted if following one of the following patterns:
-
-1) anyOf:
-- type: integer
-- type: string
-2) allOf:
-- anyOf:
-- type: integer
-- type: string
-- ... zero or more||
-|**x_kubernetes_list_map_keys**|[str]|x-kubernetes-list-map-keys annotates an array with the x-kubernetes-list-type `map` by specifying the keys used as the index of the map.
-
-This tag MUST only be used on lists that have the &#34;x-kubernetes-list-type&#34; extension set to &#34;map&#34;. Also, the values specified for this attribute must be a scalar typed field of the child structure (no nesting is supported).
-
-The properties specified must either be required or have a default value, to ensure those properties are present for all list items.||
-|**x_kubernetes_list_type**|str|x-kubernetes-list-type annotates an array to further describe its topology. This extension must only be used on lists and may have 3 possible values:
-
-1) `atomic`: the list is treated as a single entity, like a scalar.
-Atomic lists will be entirely replaced when updated. This extension
-may be used on any type of list (struct, scalar, ...).
-2) `set`:
-Sets are lists that must not have multiple items with the same value. Each
-value must be a scalar, an object with x-kubernetes-map-type `atomic` or an
-array with x-kubernetes-list-type `atomic`.
-3) `map`:
-These lists are like maps in that their elements have a non-index key
-used to identify them. Order is preserved upon merge. The map tag
-must only be used on a list with elements of type object.
-Defaults to atomic for arrays.||
-|**x_kubernetes_map_type**|str|x-kubernetes-map-type annotates an object to further describe its topology. This extension must only be used when type is object and may have 2 possible values:
-
-1) `granular`:
-These maps are actual maps (key-value pairs) and each fields are independent
-from each other (they can each be manipulated by separate actors). This is
-the default behaviour for all maps.
-2) `atomic`: the list is treated as a single entity, like a scalar.
-Atomic maps will be entirely replaced when updated.||
+|**x_kubernetes_int_or_string**|bool|x-kubernetes-int-or-string specifies that this value is either an integer or a string. If this is true, an empty type is allowed and type as child of anyOf is permitted if following one of the following patterns:&lt;br&gt;&lt;br&gt;1) anyOf:&lt;br&gt;- type: integer&lt;br&gt;- type: string&lt;br&gt;2) allOf:&lt;br&gt;- anyOf:&lt;br&gt;- type: integer&lt;br&gt;- type: string&lt;br&gt;- ... zero or more||
+|**x_kubernetes_list_map_keys**|[str]|x-kubernetes-list-map-keys annotates an array with the x-kubernetes-list-type `map` by specifying the keys used as the index of the map.&lt;br&gt;&lt;br&gt;This tag MUST only be used on lists that have the &#34;x-kubernetes-list-type&#34; extension set to &#34;map&#34;. Also, the values specified for this attribute must be a scalar typed field of the child structure (no nesting is supported).&lt;br&gt;&lt;br&gt;The properties specified must either be required or have a default value, to ensure those properties are present for all list items.||
+|**x_kubernetes_list_type**|str|x-kubernetes-list-type annotates an array to further describe its topology. This extension must only be used on lists and may have 3 possible values:&lt;br&gt;&lt;br&gt;1) `atomic`: the list is treated as a single entity, like a scalar.&lt;br&gt;Atomic lists will be entirely replaced when updated. This extension&lt;br&gt;may be used on any type of list (struct, scalar, ...).&lt;br&gt;2) `set`:&lt;br&gt;Sets are lists that must not have multiple items with the same value. Each&lt;br&gt;value must be a scalar, an object with x-kubernetes-map-type `atomic` or an&lt;br&gt;array with x-kubernetes-list-type `atomic`.&lt;br&gt;3) `map`:&lt;br&gt;These lists are like maps in that their elements have a non-index key&lt;br&gt;used to identify them. Order is preserved upon merge. The map tag&lt;br&gt;must only be used on a list with elements of type object.&lt;br&gt;Defaults to atomic for arrays.||
+|**x_kubernetes_map_type**|str|x-kubernetes-map-type annotates an object to further describe its topology. This extension must only be used when type is object and may have 2 possible values:&lt;br&gt;&lt;br&gt;1) `granular`:&lt;br&gt;These maps are actual maps (key-value pairs) and each fields are independent&lt;br&gt;from each other (they can each be manipulated by separate actors). This is&lt;br&gt;the default behaviour for all maps.&lt;br&gt;2) `atomic`: the list is treated as a single entity, like a scalar.&lt;br&gt;Atomic maps will be entirely replaced when updated.||
 |**x_kubernetes_preserve_unknown_fields**|bool|x-kubernetes-preserve-unknown-fields stops the API server decoding step from pruning fields which are not specified in the validation schema. This affects fields recursively, but switches back to normal pruning behaviour if nested properties or additionalProperties are specified in the schema. This can either be true or undefined. False is forbidden.||
 |**x_kubernetes_validations**|[[ValidationRule](#validationrule)]|x-kubernetes-validations describes a list of validation rules written in the CEL expression language. This field is an alpha-level. Using this field requires the feature gate `CustomResourceValidationExpressions` to be enabled.||
 ### ServiceReference
@@ -6788,20 +6143,8 @@ WebhookClientConfig contains the information to make a TLS connection with the w
 | name | type | description | default value |
 | --- | --- | --- | --- |
 |**caBundle**|str|caBundle is a PEM encoded CA bundle which will be used to validate the webhook&#39;s server certificate. If unspecified, system trust roots on the apiserver are used.||
-|**service**|[ServiceReference](#servicereference)|service is a reference to the service for this webhook. Either service or url must be specified.
-
-If the webhook is running within the cluster, then you should use `service`.||
-|**url**|str|url gives the location of the webhook, in standard URL form (`scheme://host:port/path`). Exactly one of `url` or `service` must be specified.
-
-The `host` should not refer to a service running in the cluster; use the `service` field instead. The host might be resolved via external DNS in some apiservers (e.g., `kube-apiserver` cannot resolve in-cluster DNS as that would be a layering violation). `host` may also be an IP address.
-
-Please note that using `localhost` or `127.0.0.1` as a `host` is risky unless you take great care to run this webhook on all hosts which run an apiserver which might need to make calls to this webhook. Such installs are likely to be non-portable, i.e., not easy to turn up in a new cluster.
-
-The scheme must be &#34;https&#34;; the URL must begin with &#34;https://&#34;.
-
-A path is optional, and if present may be any string permissible in a URL. You may use the path to pass an arbitrary string to the webhook, for example, a cluster identifier.
-
-Attempting to use a user or basic auth e.g. &#34;user:password@&#34; is not allowed. Fragments (&#34;#...&#34;) and query parameters (&#34;?...&#34;) are not allowed, either.||
+|**service**|[ServiceReference](#servicereference)|service is a reference to the service for this webhook. Either service or url must be specified.&lt;br&gt;&lt;br&gt;If the webhook is running within the cluster, then you should use `service`.||
+|**url**|str|url gives the location of the webhook, in standard URL form (`scheme://host:port/path`). Exactly one of `url` or `service` must be specified.&lt;br&gt;&lt;br&gt;The `host` should not refer to a service running in the cluster; use the `service` field instead. The host might be resolved via external DNS in some apiservers (e.g., `kube-apiserver` cannot resolve in-cluster DNS as that would be a layering violation). `host` may also be an IP address.&lt;br&gt;&lt;br&gt;Please note that using `localhost` or `127.0.0.1` as a `host` is risky unless you take great care to run this webhook on all hosts which run an apiserver which might need to make calls to this webhook. Such installs are likely to be non-portable, i.e., not easy to turn up in a new cluster.&lt;br&gt;&lt;br&gt;The scheme must be &#34;https&#34;; the URL must begin with &#34;https://&#34;.&lt;br&gt;&lt;br&gt;A path is optional, and if present may be any string permissible in a URL. You may use the path to pass an arbitrary string to the webhook, for example, a cluster identifier.&lt;br&gt;&lt;br&gt;Attempting to use a user or basic auth e.g. &#34;user:password@&#34; is not allowed. Fragments (&#34;#...&#34;) and query parameters (&#34;?...&#34;) are not allowed, either.||
 ### WebhookConversion
 
 WebhookConversion describes how to call a conversion webhook
@@ -6975,34 +6318,20 @@ ObjectMeta is metadata that all persisted resources must have, which includes al
 | name | type | description | default value |
 | --- | --- | --- | --- |
 |**annotations**|{str:str}|Annotations is an unstructured key value map stored with a resource that may be set by external tools to store and retrieve arbitrary metadata. They are not queryable and should be preserved when modifying objects. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations||
-|**creationTimestamp**|str|CreationTimestamp is a timestamp representing the server time when this object was created. It is not guaranteed to be set in happens-before order across separate operations. Clients may not set this value. It is represented in RFC3339 form and is in UTC.
-
-Populated by the system. Read-only. Null for lists. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata||
+|**creationTimestamp**|str|CreationTimestamp is a timestamp representing the server time when this object was created. It is not guaranteed to be set in happens-before order across separate operations. Clients may not set this value. It is represented in RFC3339 form and is in UTC.&lt;br&gt;&lt;br&gt;Populated by the system. Read-only. Null for lists. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata||
 |**deletionGracePeriodSeconds**|int|Number of seconds allowed for this object to gracefully terminate before it will be removed from the system. Only set when deletionTimestamp is also set. May only be shortened. Read-only.||
-|**deletionTimestamp**|str|DeletionTimestamp is RFC 3339 date and time at which this resource will be deleted. This field is set by the server when a graceful deletion is requested by the user, and is not directly settable by a client. The resource is expected to be deleted (no longer visible from resource lists, and not reachable by name) after the time in this field, once the finalizers list is empty. As long as the finalizers list contains items, deletion is blocked. Once the deletionTimestamp is set, this value may not be unset or be set further into the future, although it may be shortened or the resource may be deleted prior to this time. For example, a user may request that a pod is deleted in 30 seconds. The Kubelet will react by sending a graceful termination signal to the containers in the pod. After that 30 seconds, the Kubelet will send a hard termination signal (SIGKILL) to the container and after cleanup, remove the pod from the API. In the presence of network partitions, this object may still exist after this timestamp, until an administrator or automated process can determine the resource is fully terminated. If not set, graceful deletion of the object has not been requested.
-
-Populated by the system when a graceful deletion is requested. Read-only. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata||
+|**deletionTimestamp**|str|DeletionTimestamp is RFC 3339 date and time at which this resource will be deleted. This field is set by the server when a graceful deletion is requested by the user, and is not directly settable by a client. The resource is expected to be deleted (no longer visible from resource lists, and not reachable by name) after the time in this field, once the finalizers list is empty. As long as the finalizers list contains items, deletion is blocked. Once the deletionTimestamp is set, this value may not be unset or be set further into the future, although it may be shortened or the resource may be deleted prior to this time. For example, a user may request that a pod is deleted in 30 seconds. The Kubelet will react by sending a graceful termination signal to the containers in the pod. After that 30 seconds, the Kubelet will send a hard termination signal (SIGKILL) to the container and after cleanup, remove the pod from the API. In the presence of network partitions, this object may still exist after this timestamp, until an administrator or automated process can determine the resource is fully terminated. If not set, graceful deletion of the object has not been requested.&lt;br&gt;&lt;br&gt;Populated by the system when a graceful deletion is requested. Read-only. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#metadata||
 |**finalizers**|[str]|Must be empty before the object is deleted from the registry. Each entry is an identifier for the responsible component that will remove the entry from the list. If the deletionTimestamp of the object is non-nil, entries in this list can only be removed. Finalizers may be processed and removed in any order.  Order is NOT enforced because it introduces significant risk of stuck finalizers. finalizers is a shared field, any actor with permission can reorder it. If the finalizer list is processed in order, then this can lead to a situation in which the component responsible for the first finalizer in the list is waiting for a signal (field value, external system, or other) produced by a component responsible for a finalizer later in the list, resulting in a deadlock. Without enforced ordering finalizers are free to order amongst themselves and are not vulnerable to ordering changes in the list.||
-|**generateName**|str|GenerateName is an optional prefix, used by the server, to generate a unique name ONLY IF the Name field has not been provided. If this field is used, the name returned to the client will be different than the name passed. This value will also be combined with a unique suffix. The provided value has the same validation rules as the Name field, and may be truncated by the length of the suffix required to make the value unique on the server.
-
-If this field is specified and the generated name exists, the server will return a 409.
-
-Applied only if Name is not specified. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#idempotency||
+|**generateName**|str|GenerateName is an optional prefix, used by the server, to generate a unique name ONLY IF the Name field has not been provided. If this field is used, the name returned to the client will be different than the name passed. This value will also be combined with a unique suffix. The provided value has the same validation rules as the Name field, and may be truncated by the length of the suffix required to make the value unique on the server.&lt;br&gt;&lt;br&gt;If this field is specified and the generated name exists, the server will return a 409.&lt;br&gt;&lt;br&gt;Applied only if Name is not specified. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#idempotency||
 |**generation**|int|A sequence number representing a specific generation of the desired state. Populated by the system. Read-only.||
 |**labels**|{str:str}|Map of string keys and values that can be used to organize and categorize (scope and select) objects. May match selectors of replication controllers and services. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels||
 |**managedFields**|[[ManagedFieldsEntry](#managedfieldsentry)]|ManagedFields maps workflow-id and version to the set of fields that are managed by that workflow. This is mostly for internal housekeeping, and users typically shouldn&#39;t need to set or understand this field. A workflow can be the user&#39;s name, a controller&#39;s name, or the name of a specific apply path like &#34;ci-cd&#34;. The set of fields is always in the version that the workflow used when modifying the object.||
 |**name**|str|Name must be unique within a namespace. Is required when creating resources, although some resources may allow a client to request the generation of an appropriate name automatically. Name is primarily intended for creation idempotence and configuration definition. Cannot be updated. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#names||
-|**namespace**|str|Namespace defines the space within which each name must be unique. An empty namespace is equivalent to the &#34;default&#34; namespace, but &#34;default&#34; is the canonical representation. Not all objects are required to be scoped to a namespace - the value of this field for those objects will be empty.
-
-Must be a DNS_LABEL. Cannot be updated. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces||
+|**namespace**|str|Namespace defines the space within which each name must be unique. An empty namespace is equivalent to the &#34;default&#34; namespace, but &#34;default&#34; is the canonical representation. Not all objects are required to be scoped to a namespace - the value of this field for those objects will be empty.&lt;br&gt;&lt;br&gt;Must be a DNS_LABEL. Cannot be updated. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces||
 |**ownerReferences**|[[OwnerReference](#ownerreference)]|List of objects depended by this object. If ALL objects in the list have been deleted, this object will be garbage collected. If this object is managed by a controller, then an entry in this list will point to this controller, with the controller field set to true. There cannot be more than one managing controller.||
-|**resourceVersion**|str|An opaque value that represents the internal version of this object that can be used by clients to determine when objects have changed. May be used for optimistic concurrency, change detection, and the watch operation on a resource or set of resources. Clients must treat these values as opaque and passed unmodified back to the server. They may only be valid for a particular resource or set of resources.
-
-Populated by the system. Read-only. Value must be treated as opaque by clients and . More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency||
+|**resourceVersion**|str|An opaque value that represents the internal version of this object that can be used by clients to determine when objects have changed. May be used for optimistic concurrency, change detection, and the watch operation on a resource or set of resources. Clients must treat these values as opaque and passed unmodified back to the server. They may only be valid for a particular resource or set of resources.&lt;br&gt;&lt;br&gt;Populated by the system. Read-only. Value must be treated as opaque by clients and . More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#concurrency-control-and-consistency||
 |**selfLink**|str|Deprecated: selfLink is a legacy read-only field that is no longer populated by the system.||
-|**uid**|str|UID is the unique in time and space value for this object. It is typically generated by the server on successful creation of a resource and is not allowed to change on PUT operations.
-
-Populated by the system. Read-only. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#uids||
+|**uid**|str|UID is the unique in time and space value for this object. It is typically generated by the server on successful creation of a resource and is not allowed to change on PUT operations.&lt;br&gt;&lt;br&gt;Populated by the system. Read-only. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names#uids||
 ### OwnerReference
 
 OwnerReference contains enough information to let you identify an owning object. An owning object must be in the same namespace as the dependent, or be cluster-scoped, so there is no namespace field.
@@ -7061,11 +6390,7 @@ StatusCause provides more information about an api.Status failure, including cas
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**field**|str|The field of the resource that has caused this error, as named by its JSON serialization. May include dot and postfix notation for nested attributes. Arrays are zero-indexed.  Fields may appear more than once in an array of causes due to fields having multiple errors. Optional.
-
-Examples:
-&#34;name&#34; - the field &#34;name&#34; on the current resource
-&#34;items[0].name&#34; - the field &#34;name&#34; on the first array entry in &#34;items&#34;||
+|**field**|str|The field of the resource that has caused this error, as named by its JSON serialization. May include dot and postfix notation for nested attributes. Arrays are zero-indexed.  Fields may appear more than once in an array of causes due to fields having multiple errors. Optional.&lt;br&gt;&lt;br&gt;Examples:&lt;br&gt;&#34;name&#34; - the field &#34;name&#34; on the current resource&lt;br&gt;&#34;items[0].name&#34; - the field &#34;name&#34; on the first array entry in &#34;items&#34;||
 |**message**|str|A human-readable description of the cause of the error.  This field may be presented as-is to a reader.||
 |**reason**|str|A machine-readable description of the cause of the error. If this value is empty there is no information available.||
 ### StatusDetails
@@ -7090,11 +6415,7 @@ Event represents a single event to a watched resource.
 
 | name | type | description | default value |
 | --- | --- | --- | --- |
-|**object** `required`|any|Object is:
-* If Type is Added or Modified: the new state of the object.
-* If Type is Deleted: the state of the object immediately before deletion.
-* If Type is Error: *Status is recommended; other types may make sense
-depending on context.||
+|**object** `required`|any|Object is:&lt;br&gt;* If Type is Added or Modified: the new state of the object.&lt;br&gt;* If Type is Deleted: the state of the object immediately before deletion.&lt;br&gt;* If Type is Error: *Status is recommended; other types may make sense&lt;br&gt;depending on context.||
 |**type** `required`|str|||
 ### Info
 
